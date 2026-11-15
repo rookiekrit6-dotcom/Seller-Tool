@@ -158,6 +158,12 @@ table.it th{text-align:right;font-size:.82rem;font-weight:600;color:var(--ink-so
 table.it th:first-child,table.it td:first-child{text-align:left}
 table.it td{padding:8px 10px 8px 0;text-align:right;font-family:var(--f-num);white-space:nowrap}
 table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:120px}
+
+/* checklist */
+.chk{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.chk label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.chk input{width:18px;height:18px;margin-top:3px;flex:none;accent-color:var(--brand)}
+.chk input:checked+span{color:var(--ink-soft);text-decoration:line-through}
 </style>
 </head>
 <body>
@@ -242,11 +248,35 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
     <p class="note">ส่วนลดคิดเป็นส่วนลดที่ร้านออกเองทั้งหมด งบโฆษณาสูงสุดคือค่าโฆษณาต่อออเดอร์ที่ทำให้กำไรเหลือ 0 พอดีที่ราคาขายปกติ</p>
   </div>
   <div class="card" style="margin-top:16px">
+    <h2>ขายเป็นเซ็ต</h2>
+    <div class="fields">
+      <label class="f">จำนวนชิ้นต่อเซ็ต<input type="number" id="bN" min="2" max="20" step="1" value="2" inputmode="numeric"></label>
+      <label class="f">ส่วนลดเมื่อซื้อเป็นเซ็ต %<input type="number" id="bPct" min="0" max="90" step="1" value="5" inputmode="decimal"></label>
+    </div>
+    <div class="kv" id="bOut" aria-live="polite"></div>
+    <p class="note">คิดว่าทั้งเซ็ตส่งในกล่องเดียว จึงใช้ค่ากล่อง ค่าส่ง ค่าโฆษณา และค่าคงที่ต่อออเดอร์เพียงครั้งเดียว ถ้าเซ็ตของคุณต้องใช้กล่องใหญ่ขึ้นหรือค่าส่งแพงขึ้น ให้ปรับตัวเลขด้านบนก่อน</p>
+  </div>
+  <div class="card" style="margin-top:16px">
     <h2>สินค้าที่บันทึกไว้</h2>
     <div class="row"><label class="f" style="flex:1;min-width:180px">ชื่อสินค้า<input type="text" id="itName" placeholder="เช่น กระเป๋าผ้าแคนวาส"></label>
       <button class="btn" id="itSave" type="button" style="align-self:flex-end"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>บันทึกสินค้านี้</button></div>
     <div id="itOut"></div>
     <p class="note">บันทึกตัวเลขที่กรอกอยู่ด้านบนเป็นสินค้า 1 รายการ เพื่อดูกำไรรวมของทั้งร้าน รายการเก็บอยู่ในเบราว์เซอร์ของเครื่องนี้เท่านั้น</p>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h2>เช็กลิสต์ก่อนลงขายสินค้า</h2>
+    <ul class="chk">
+      <li><label><input type="checkbox"><span>รูปสินค้าชัด พื้นหลังสะอาด และมีอย่างน้อย 5 รูปจากหลายมุม</span></label></li>
+      <li><label><input type="checkbox"><span>ชื่อสินค้ามีคำที่ลูกค้าใช้ค้นหา เช่น ประเภท วัสดุ ขนาด</span></label></li>
+      <li><label><input type="checkbox"><span>รายละเอียดระบุขนาด น้ำหนัก วัสดุ และสิ่งที่อยู่ในกล่อง</span></label></li>
+      <li><label><input type="checkbox"><span>ราคาที่ตั้งสูงกว่าราคาเท่าทุน และยังเหลือกำไรเมื่อจัดโปรโมชัน</span></label></li>
+      <li><label><input type="checkbox"><span>น้ำหนักและขนาดพัสดุที่กรอกตรงกับของจริง เพื่อไม่ให้โดนเก็บค่าส่งเพิ่ม</span></label></li>
+      <li><label><input type="checkbox"><span>จำนวนสต็อกในระบบตรงกับของที่มีอยู่จริง</span></label></li>
+      <li><label><input type="checkbox"><span>เขียนเงื่อนไขการเปลี่ยนและคืนสินค้าให้ชัดเจน</span></label></li>
+      <li><label><input type="checkbox"><span>ตั้งข้อความตอบกลับอัตโนมัติสำหรับคำถามที่พบบ่อย</span></label></li>
+      <li><label><input type="checkbox"><span>เปิดหน้าสินค้าบนมือถือเพื่อดูว่ารูปและข้อความแสดงครบ</span></label></li>
+      <li><label><input type="checkbox"><span>เตรียมแคปชันและรูปสำหรับโพสต์โปรโมตในวันแรก</span></label></li>
+    </ul>
   </div>
   <div class="card gloss" style="margin-top:16px">
     <h2>คำที่ควรรู้ก่อนตั้งราคา</h2>
@@ -277,6 +307,8 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
       <div class="fields" style="margin-top:12px">
         <label class="f">โปรโมชัน<input type="text" id="cPromo" value="ซื้อ 2 ใบ ส่งฟรี"></label>
         <label class="f">แฮชแท็กเพิ่มเติม<input type="text" id="cTags" value="กระเป๋าผ้า ของมันต้องมี"></label>
+        <label class="f">โอกาส
+          <select id="cOcc"><option value="">ไม่ระบุ</option><option value="dd">วันเลขเบิ้ล</option><option value="pay">เงินเดือนออก</option><option value="ny">ปีใหม่</option><option value="sk">สงกรานต์</option><option value="school">เปิดเทอม</option><option value="rain">หน้าฝน</option></select></label>
         <label class="f">คำลงท้าย
           <select id="cEnd"><option value="ค่ะ">ค่ะ</option><option value="ครับ">ครับ</option><option value="">ไม่ใส่</option></select></label>
       </div>
@@ -432,6 +464,15 @@ function calc(){
   $('oMonth').textContent = baht(b.net * num('orders')) + ' ฿';
   renderCompare(v);
   renderPromo(v, b);
+  renderBundle(v, b);
+}
+function renderBundle(v, b){
+  const n = Math.max(2, Math.round(num('bN')) || 2), pct = Math.min(90, num('bPct')), price = v.price * n;
+  const sb = breakdown(Object.assign({}, v, {cost: v.cost * n, discount: v.discount * n + price * pct / 100}), price), diff = sb.net - b.net;
+  $('bOut').innerHTML = `<div><span>ราคาเซ็ต ${n} ชิ้น</span><strong>${baht(sb.base)} ฿</strong></div>
+    <div><span>กำไรต่อออเดอร์</span><strong style="color:${sb.net < 0 ? 'var(--bad)' : 'inherit'}">${baht(sb.net)} ฿</strong></div>
+    <div><span>กำไรเฉลี่ยต่อชิ้น</span><strong>${baht(sb.net / n)} ฿</strong></div>
+    <div><span>เทียบกับขาย 1 ชิ้นต่อออเดอร์</span><strong>${diff >= 0 ? '+' : ''}${baht(diff)} ฿</strong></div>`;
 }
 function renderPromo(v, b){
   const pct = Math.min(90, num('promoPct')), cut = v.price * pct / 100;
@@ -478,6 +519,8 @@ function captions(){
   const priceLine = price ? `ราคา ${price} บาท` + (normal ? ` (ปกติ ${normal} บาท)` : '') : '';
   const L = arr => arr.filter(Boolean).join('\n'), q = e === 'ค่ะ' ? 'คะ' : e;
   const f0 = feats[0] || 'คุณภาพดี';
+  const OCC = { dd:'โปรวันเลขเบิ้ลมาแล้ว', pay:'เงินเดือนออกแล้ว ให้รางวัลตัวเองกัน', ny:'ต้อนรับปีใหม่', sk:'รับสงกรานต์', school:'ต้อนรับเปิดเทอม', rain:'หน้าฝนนี้ต้องมี' };
+  const open = OCC[$('cOcc').value];
   return [
     ['กระชับ ตรงประเด็น', L([name, feats.map(f => '• ' + f).join('\n'), '', priceLine, promo, ch && 'สั่งซื้อ: ' + ch, '', tags])],
     ['ชวนคุย เป็นกันเอง', L([`ใครกำลังมองหา${name}อยู่ ลองดูตัวนี้ก่อน${e}`, '', feats.length ? 'ที่ลูกค้าชอบคือ ' + feats.join(' / ') : '', priceLine && priceLine + ' เท่านั้น' + e, promo && 'ตอนนี้มีโปร ' + promo, ch, '', tags])],
@@ -487,7 +530,7 @@ function captions(){
     ['ของเข้าใหม่', L([`ของเข้าแล้ว${e} ${name}`, '', feats.map(f => '- ' + f).join('\n'), '', priceLine, promo, ch && 'สนใจ ' + ch, '', tags])],
     ['ซื้อเป็นของขวัญ', L([`กำลังหาของขวัญให้คนสำคัญอยู่ไหม${q}`, `ลองดู${name}`, '', feats.length ? 'จุดเด่น: ' + feats.join(', ') : '', priceLine, promo, ch, '', tags])],
     ['ตอบข้อลังเล', L([`ยังลังเลเรื่อง${name}อยู่ใช่ไหม${q}`, '', feats.map(f => '- ' + f).join('\n'), '', priceLine, promo && 'โปรตอนนี้: ' + promo, 'สอบถามรายละเอียดก่อนตัดสินใจได้' + e, ch, '', tags])]
-  ];
+  ].map(c => open ? [c[0], open + e + '\n' + c[1]] : c);
 }
 function renderCaptions(){
   $('cOut').innerHTML = captions().map((c,i) => `<div class="cap"><pre id="cap${i}">${esc(c[1])}</pre><div class="row"><small>${c[0]} · ${c[1].length} ตัวอักษร</small><button class="btn small ghost" type="button" data-copy="cap${i}">คัดลอก</button></div></div>`).join('');
