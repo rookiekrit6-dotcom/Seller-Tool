@@ -184,6 +184,7 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
     <nav class="tabs" aria-label="เครื่องมือ">
       <a href="#profit" data-tab="profit"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>คำนวณกำไร</a>
       <a href="#caption" data-tab="caption"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>แคปชันขายของ</a>
+      <a href="#stock" data-tab="stock"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8l8-4 8 4v8l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v8"/></svg>สต็อกและค่าส่ง</a>
       <a href="#label" data-tab="label"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg>ใบปะหน้าพัสดุ</a>
     </nav>
   </div>
@@ -341,6 +342,11 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
     </div>
   </div>
   <div class="card" style="margin-top:16px">
+    <h2>วันขายดีที่ใกล้เข้ามา</h2>
+    <div class="kv" id="campOut"></div>
+    <p class="note">แสดงวันเลขเบิ้ลและช่วงเงินเดือนออกที่ใกล้ที่สุด เพื่อเตรียมสต็อกและแคปชันล่วงหน้า วันและเงื่อนไขแคมเปญจริงขึ้นกับประกาศของแต่ละแพลตฟอร์ม</p>
+  </div>
+  <div class="card" style="margin-top:16px">
     <h2>ข้อความตอบลูกค้าสำเร็จรูป</h2>
     <p class="note" style="margin:0 0 4px">กดคัดลอกแล้วแก้ส่วนที่อยู่ในวงเล็บเหลี่ยมให้ตรงกับออเดอร์จริง ถ้าร้านคุณใช้คำลงท้ายว่าครับ ให้แก้คำลงท้ายก่อนส่ง</p>
     <div class="grid two" style="gap:0 16px">
@@ -353,6 +359,35 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
       <div class="cap"><pre id="rp3">ได้รับสินค้าแล้วใช่ไหมคะ ถ้าใช้แล้วชอบ รบกวนให้คะแนนและรีวิวสั้น ๆ ให้ร้านด้วยนะคะ เป็นกำลังใจให้ร้านเล็ก ๆ ได้มากเลยค่ะ ขอบคุณค่ะ</pre><div class="row"><small>ขอรีวิวหลังได้รับของ</small><button class="btn small ghost" type="button" data-copy="rp3">คัดลอก</button></div></div>
       <div class="cap"><pre id="rp4">ขออภัยที่พัสดุล่าช้านะคะ ร้านตรวจสอบกับขนส่งให้แล้ว ตอนนี้พัสดุอยู่ที่ [สถานะล่าสุด] ร้านจะติดตามให้ต่อเนื่อง และแจ้งความคืบหน้าทางแชตนี้ค่ะ</pre><div class="row"><small>พัสดุล่าช้า</small><button class="btn small ghost" type="button" data-copy="rp4">คัดลอก</button></div></div>
       <div class="cap"><pre id="rp5">ร้านได้รับยอดโอน [จำนวนเงิน] บาท เรียบร้อยแล้วค่ะ ขอบคุณมากค่ะ รบกวนยืนยันชื่อ ที่อยู่ และเบอร์โทรสำหรับจัดส่งอีกครั้งนะคะ</pre><div class="row"><small>ยืนยันยอดโอน</small><button class="btn small ghost" type="button" data-copy="rp5">คัดลอก</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-stock">
+  <div class="grid two">
+    <div class="card">
+      <h2>ควรสั่งของเมื่อไร</h2>
+      <div class="fields">
+        <label class="f">สต็อกตอนนี้ (ชิ้น)<input type="number" id="stNow" min="0" step="1" value="120" inputmode="numeric"></label>
+        <label class="f">ขายเฉลี่ยวันละ (ชิ้น)<input type="number" id="stDaily" min="0" step="0.5" value="8" inputmode="decimal"></label>
+        <label class="f">สั่งแล้วรอของกี่วัน<input type="number" id="stLead" min="0" step="1" value="7" inputmode="numeric"></label>
+        <label class="f">เผื่อสำรองกี่วัน<input type="number" id="stSafe" min="0" step="1" value="3" inputmode="numeric"></label>
+        <label class="f">อยากมีของขายได้กี่วันต่อรอบ<input type="number" id="stCover" min="1" step="1" value="30" inputmode="numeric"></label>
+      </div>
+      <div class="kv" id="stOut" aria-live="polite"></div>
+      <p class="note">จุดสั่งซื้อคือจำนวนสต็อกที่ควรเริ่มสั่งของรอบใหม่ คิดจากยอดขายต่อวันคูณด้วยวันที่รอของบวกวันสำรอง ช่วงแคมเปญยอดขายต่อวันจะสูงกว่าปกติ ควรเพิ่มวันสำรอง</p>
+    </div>
+    <div class="card">
+      <h2>น้ำหนักที่ขนส่งใช้คิดค่าส่ง</h2>
+      <div class="fields">
+        <label class="f">กว้าง (ซม.)<input type="number" id="vW" min="0" step="1" value="30" inputmode="decimal"></label>
+        <label class="f">ยาว (ซม.)<input type="number" id="vL" min="0" step="1" value="25" inputmode="decimal"></label>
+        <label class="f">สูง (ซม.)<input type="number" id="vH" min="0" step="1" value="15" inputmode="decimal"></label>
+        <label class="f">น้ำหนักจริง (กก.)<input type="number" id="vKg" min="0" step="0.1" value="1.2" inputmode="decimal"></label>
+        <label class="f">ตัวหารของขนส่ง<input type="number" id="vDiv" min="1" step="100" value="5000" inputmode="numeric"></label>
+      </div>
+      <div class="kv" id="vOut" aria-live="polite"></div>
+      <p class="note">ขนส่งหลายเจ้าคิดค่าส่งจากน้ำหนักจริงหรือน้ำหนักตามขนาดกล่อง แล้วแต่ค่าไหนมากกว่า น้ำหนักตามขนาดคิดจาก กว้าง × ยาว × สูง หารด้วยตัวหาร ซึ่งแต่ละขนส่งใช้ไม่เท่ากัน ค่าตั้งต้น 5000 เป็นค่าที่พบบ่อย กรุณาตรวจตัวหารจริงกับขนส่งที่คุณใช้</p>
     </div>
   </div>
 </section>
@@ -393,6 +428,7 @@ COD 350</textarea></label>
 <footer class="site-ft"><button type="button" data-open="dlgGuide">วิธีใช้</button><button type="button" data-open="dlgPolicy">นโยบายความเป็นส่วนตัวและความปลอดภัย</button><a href="https://github.com/rookiekrit6-dotcom/Seller-Tool/issues">แจ้งปัญหาหรือเสนอแนะ</a><span>ใช้ฟรี ไม่ต้องสมัครสมาชิก</span></footer>
 <dialog class="dlg" id="dlgGuide" aria-labelledby="dlgGuideT"><div class="dlg-h"><b id="dlgGuideT">วิธีใช้ กำไรแม่ค้า</b><button class="dlg-x" type="button" data-close>ปิด</button></div><div class="dlg-b"><h3>คำนวณกำไร</h3><ol><li>เลือกแพลตฟอร์มและหมวดสินค้า ระบบจะใส่อัตราค่าธรรมเนียมตั้งต้นให้</li><li>กรอกราคาขาย ต้นทุนสินค้า ค่าแพ็ก ค่าส่ง และค่าโฆษณาต่อออเดอร์</li><li>เปิด Seller Center ของร้านคุณ แล้วแก้อัตราค่าธรรมเนียมในเว็บให้ตรงกับของจริง</li><li>ดูกำไรสุทธิ ราคาเท่าทุน และราคาที่ควรตั้งเพื่อให้ได้กำไรตามเป้า</li><li>เลื่อนลงไปดูตารางเทียบว่าขายที่แพลตฟอร์มไหนเหลือกำไรมากกว่า</li><li>กดบันทึกสินค้านี้ เพื่อเก็บสินค้าหลายรายการและดูกำไรรวมต่อเดือนของทั้งร้าน</li></ol>
 <h3>แคปชันขายของ</h3><ol><li>กรอกชื่อสินค้า ราคา จุดเด่นบรรทัดละ 1 ข้อ และโปรโมชัน</li><li>กดสร้างแคปชัน จะได้ 8 แบบให้เลือก</li><li>กดคัดลอกแบบที่ชอบ แล้วอ่านทวนและปรับถ้อยคำให้ตรงกับสินค้าจริงก่อนโพสต์</li></ol>
+<h3>สต็อกและค่าส่ง</h3><ol><li>ใส่สต็อกที่มี ยอดขายต่อวัน และจำนวนวันที่รอของ เพื่อดูว่าควรสั่งของรอบใหม่เมื่อไร</li><li>ใส่ขนาดกล่องและน้ำหนักจริง เพื่อดูว่าขนส่งจะคิดค่าส่งจากน้ำหนักใด</li></ol>
 <h3>ใบปะหน้าพัสดุ</h3><ol><li>กรอกชื่อและที่อยู่ผู้ส่ง ระบบจะจำไว้ในเครื่องนี้</li><li>วางที่อยู่ลูกค้า เว้น 1 บรรทัดว่างระหว่างแต่ละราย บรรทัดแรกคือชื่อผู้รับ</li><li>ถ้าเก็บเงินปลายทาง เพิ่มบรรทัด COD ตามด้วยยอดเงิน</li><li>เลือกขนาดกระดาษ แล้วกดพิมพ์ใบปะหน้า</li></ol></div></dialog>
 <dialog class="dlg" id="dlgPolicy" aria-labelledby="dlgPolicyT"><div class="dlg-h"><b id="dlgPolicyT">นโยบายความเป็นส่วนตัวและความปลอดภัยของข้อมูล</b><button class="dlg-x" type="button" data-close>ปิด</button></div><div class="dlg-b">
 <p><small>ปรับปรุงล่าสุด 15 พฤศจิกายน 2569</small></p>
@@ -420,7 +456,7 @@ const baht = n => n.toLocaleString('th-TH', {minimumFractionDigits:2, maximumFra
 const store = { get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} } };
 
 /* ---------- tabs ---------- */
-const TABS = ['profit','caption','label'];
+const TABS = ['profit','caption','stock','label'];
 function showTab(){
   const t = TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'profit';
   TABS.forEach(n => $('v-'+n).classList.toggle('on', n === t));
@@ -578,6 +614,27 @@ function renderItems(){
 }
 function saveItems(){ store.set('km_items', items); renderItems(); }
 
+/* ---------- stock, shipping weight, campaign dates ---------- */
+function calcStock(){
+  const now = num('stNow'), daily = num('stDaily'), lead = num('stLead'), safe = num('stSafe'), cover = Math.max(1, num('stCover'));
+  const rop = Math.ceil(daily * (lead + safe)), left = daily > 0 ? Math.floor(now / daily) : null, wait = daily > 0 ? Math.floor((now - rop) / daily) : null;
+  const order = now <= rop;
+  $('stOut').innerHTML = `<div><span>ของที่มีขายได้อีก</span><strong>${left == null ? '-' : left + ' วัน'}</strong></div>
+    <div><span>ควรสั่งเมื่อเหลือ</span><strong>${rop} ชิ้น</strong></div>
+    <div><span>สถานะ</span><strong><span class="pill ${order ? 'bad' : 'good'}">${daily <= 0 ? 'ใส่ยอดขายต่อวันก่อน' : order ? 'ควรสั่งของวันนี้' : 'อีก ' + wait + ' วันค่อยสั่ง'}</span></strong></div>
+    <div><span>ควรสั่งรอบละ</span><strong>${Math.ceil(daily * cover)} ชิ้น</strong></div>`;
+  const vol = num('vW') * num('vL') * num('vH') / Math.max(1, num('vDiv')), kg = num('vKg'), use = Math.max(vol, kg);
+  $('vOut').innerHTML = `<div><span>น้ำหนักตามขนาดกล่อง</span><strong>${vol.toFixed(2)} กก.</strong></div><div><span>น้ำหนักจริง</span><strong>${kg.toFixed(2)} กก.</strong></div>
+    <div style="grid-column:1/-1"><span>ขนส่งจะคิดค่าส่งที่</span><strong>${use.toFixed(2)} กก.</strong> <span class="pill ${vol > kg ? 'warn' : 'good'}" style="display:inline-block">${vol > kg ? 'คิดตามขนาดกล่อง ลองใช้กล่องเล็กลงเพื่อลดค่าส่ง' : 'คิดตามน้ำหนักจริง'}</span></div>`;
+}
+function renderCamp(){
+  const t = new Date(); t.setHours(0, 0, 0, 0); const list = [];
+  for (let k = 0; k < 14; k++){ const y = t.getFullYear() + Math.floor((t.getMonth() + k) / 12), m = (t.getMonth() + k) % 12;
+    list.push([new Date(y, m, m + 1), 'วันเลขเบิ้ล ' + (m + 1) + '.' + (m + 1)], [new Date(y, m, 25), 'ช่วงเงินเดือนออก']); }
+  $('campOut').innerHTML = list.filter(c => c[0] >= t).sort((a, b) => a[0] - b[0]).slice(0, 4).map(c => { const d = Math.round((c[0] - t) / 864e5);
+    return `<div><span>${c[1]} · ${c[0].toLocaleDateString('th-TH', {day:'numeric', month:'long'})}</span><strong>${d === 0 ? 'วันนี้' : 'อีก ' + d + ' วัน'}</strong></div>`; }).join('');
+}
+
 /* ---------- caption ---------- */
 function captions(){
   const name = $('cName').value.trim() || 'สินค้า', price = $('cPrice').value.trim(), normal = $('cNormal').value.trim();
@@ -652,11 +709,12 @@ $('itOut').addEventListener('click', e => {
   if (l){ const it = items[+l.dataset.load]; Object.entries(FIELD).forEach(([k, id]) => $(id).value = it.v[k]); $('orders').value = it.orders; $('itName').value = it.name; calc(); scrollTo({top:0, behavior:'smooth'}); }
   if (d){ items.splice(+d.dataset.del, 1); saveItems(); }
 });
+$('v-stock').addEventListener('input', calcStock);
 $('cGo').addEventListener('click', renderCaptions);
 $('v-label').addEventListener('input', renderLabels);
 $('lPrint').addEventListener('click', () => { renderLabels(); window.print(); });
 const savedFrom = store.get('km_from'); if (savedFrom) $('lFrom').value = savedFrom;
-showTab(); renderCaptions(); renderLabels(); renderItems();
+showTab(); renderCaptions(); renderLabels(); renderItems(); calcStock(); renderCamp();
 /* ---------- guide + policy dialogs ---------- */
 document.addEventListener('click', e => {
   const o = e.target.closest('[data-open]'); if (o){ const d = document.getElementById(o.dataset.open); if (d && d.showModal) d.showModal(); return; }
