@@ -110,6 +110,11 @@ nav.tabs a{display:inline-flex;align-items:center;gap:7px}
 .types button:active{transform:translateY(3px);box-shadow:none}
 @media (prefers-reduced-motion:reduce){.btn,.types button{transition:none}}
 @media print{.btn{box-shadow:none}}
+
+/* phone: keep the tab row tidy — no visible scrollbar, tighter tabs */
+nav.tabs{scrollbar-width:none;-ms-overflow-style:none}
+nav.tabs::-webkit-scrollbar{display:none}
+@media(max-width:520px){nav.tabs a{padding:9px 10px;font-size:.92rem;gap:5px}nav.tabs{margin:0 -8px}}
 </style>
 </head>
 <body>
