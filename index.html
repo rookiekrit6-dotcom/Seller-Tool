@@ -124,6 +124,7 @@ nav.tabs::-webkit-scrollbar{display:none}
 .cmp-bar{height:14px;background:var(--line);border-radius:7px;overflow:hidden}
 .cmp-bar i{display:block;height:100%;border-radius:7px}
 .cmp-num{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.cmp-num span b{color:var(--ink)}
 .cmp-num span{display:block;font-size:.78rem;color:var(--ink-soft);font-family:var(--f-body)}
 .cmp-num strong{font-size:1.15rem}
 @media(max-width:700px){.cmp-row{grid-template-columns:1fr auto}.cmp-bar{grid-column:1/-1;order:3}.cmp-row .pill{grid-column:1/-1;order:4;justify-self:start}}
@@ -232,12 +233,14 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
         <div><span id="oTargetLb">ราคาที่ได้กำไร 20%</span><strong id="oTP">-</strong></div>
         <div><span>กำไรต่อเดือน</span><strong id="oMonth">-</strong></div>
       </div>
+      <div class="row" style="margin-top:14px"><button class="btn" id="saveImg" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>บันทึกผลเป็นรูป</button><span class="note" style="margin:0">ได้รูปสรุปกำไรไว้เก็บหรือส่งให้หุ้นส่วน</span></div>
     </div>
   </div>
   <div class="card" style="margin-top:16px">
     <h2>ขายที่ไหนเหลือกำไรมากกว่า</h2>
     <div class="fields"><label class="f">กลุ่มสินค้า
-      <select id="cmpCat"><option value="fashion">แฟชั่น เสื้อผ้า</option><option value="home">ของใช้ อาหาร ความงาม</option><option value="phone">มือถือ อิเล็กทรอนิกส์</option></select></label></div>
+      <select id="cmpCat"><option value="fashion">แฟชั่น เสื้อผ้า</option><option value="home">ของใช้ อาหาร ความงาม</option><option value="phone">มือถือ อิเล็กทรอนิกส์</option></select></label>
+      <label class="f">กำไรที่อยากได้ต่อออเดอร์ (บาท)<input type="number" id="cmpTarget" min="0" step="1" value="80" inputmode="decimal"></label></div>
     <div class="cmp" id="cmpOut" aria-live="polite"></div>
     <p class="note">ใช้ราคาและต้นทุนชุดเดียวกับที่กรอกด้านบน คิดด้วยอัตราตั้งต้นโดยประมาณของแต่ละแพลตฟอร์ม ยังไม่รวมค่าโปรแกรมเสริมที่ร้านสมัครเอง อัตราจริงของร้านคุณอาจต่างจากนี้</p>
   </div>
@@ -483,17 +486,49 @@ function renderPromo(v, b){
     <div><span>ต้องขายเพิ่มเพื่อให้กำไรรวมเท่าเดิม</span><strong>${more == null ? (pb.net <= 0 ? 'โปรนี้ขาดทุน' : '-') : '+' + more.toFixed(0) + '%'}</strong></div>
     <div><span>ค่าโฆษณาสูงสุดต่อออเดอร์</span><strong>${maxAds > 0 ? baht(maxAds) + ' ฿' : 'ไม่มีงบเหลือ'}</strong></div>`;
 }
+// lowest price whose net profit per order reaches t baht; null when unreachable
+function priceForNet(v, t){
+  const f = P => breakdown(v, P).net - t; let lo = v.discount, hi = 1e7;
+  if (f(hi) < 0) return null;
+  for (let i = 0; i < 60; i++){ const mid = (lo + hi) / 2; f(mid) >= 0 ? hi = mid : lo = mid; }
+  return hi;
+}
+// draws the current result as a 1080x1350 picture the seller can keep or post
+function saveCard(){
+  const v = inputs(), b = breakdown(v, v.price), c = document.createElement('canvas'); c.width = 1080; c.height = 1350;
+  const x = c.getContext('2d'), F = (w, px) => `${w} ${px}px "IBM Plex Sans Thai", Tahoma, sans-serif`;
+  x.fillStyle = '#efe8d9'; x.fillRect(0, 0, 1080, 1350);
+  x.fillStyle = '#0d6b5c'; x.fillRect(0, 0, 1080, 250);
+  for (let i = -40; i < 1100; i += 56){ x.fillStyle = '#f2a31b'; x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 28, 0); x.lineTo(i + 6, 22); x.lineTo(i - 22, 22); x.fill(); }
+  x.fillStyle = '#fff'; x.textBaseline = 'alphabetic'; x.font = F(700, 62); x.fillText(($('itName').value.trim() || 'สรุปกำไรต่อ 1 ออเดอร์').slice(0, 26), 60, 135);
+  x.font = F(400, 34); x.fillText(PRESETS[$('platform').value].name + '  ·  ราคาขาย ' + baht(v.price) + ' บาท', 60, 198);
+  x.fillStyle = '#fff'; x.beginPath(); x.roundRect(40, 290, 1000, 900, 28); x.fill();
+  const rows = [['ราคาหลังหักส่วนลดร้าน', b.base], ['ค่าคอมมิชชัน', -b.comm], ['ค่าโปรแกรมเสริม', -b.prog], ['ค่าธุรกรรม', -b.trans], ['ค่าคงที่ต่อออเดอร์', -b.fixed],
+    ['ต้นทุนสินค้า', -v.cost], ['ค่ากล่องและแพ็ก', -v.pack], ['ค่าส่งที่ร้านออก', -v.shipSeller], ['ค่าโฆษณา', -v.ads]].filter((r, i) => i === 0 || r[1] !== 0);
+  let y = 370;
+  rows.forEach(r => { x.fillStyle = '#4d6661'; x.font = F(400, 36); x.textAlign = 'left'; x.fillText(r[0], 90, y);
+    x.fillStyle = '#10302b'; x.font = F(600, 36); x.textAlign = 'right'; x.fillText(baht(r[1]), 990, y);
+    x.strokeStyle = '#d5dfdb'; x.lineWidth = 2; x.beginPath(); x.moveTo(90, y + 22); x.lineTo(990, y + 22); x.stroke(); y += 68; });
+  y = Math.max(y + 40, 1010);
+  x.textAlign = 'left'; x.fillStyle = '#10302b'; x.font = F(700, 44); x.fillText('กำไรสุทธิ', 90, y);
+  x.textAlign = 'right'; x.fillStyle = b.net < 0 ? '#b3261e' : '#16794c'; x.font = F(700, 92); x.fillText(baht(b.net) + ' ฿', 990, y + 18);
+  x.font = F(600, 36); x.fillText(b.net < 0 ? 'ขาดทุน' : 'อัตรากำไร ' + b.margin.toFixed(1) + '%', 990, y + 82);
+  x.textAlign = 'left'; x.fillStyle = '#4d6661'; x.font = F(400, 30); x.fillText('คำนวณด้วย กำไรแม่ค้า  ·  ' + (location.host + location.pathname).replace(/\/$/, ''), 60, 1270);
+  x.fillText('ตัวเลขเป็นการประมาณ ตรวจอัตราค่าธรรมเนียมจริงใน Seller Center', 60, 1314);
+  c.toBlob(bl => { const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = 'kamrai-maekha.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); }, 'image/png');
+}
 // same costs, each platform's default rates for the chosen product group
 const CMP = { fashion:{shopee:0,tiktok:0,lazada:0}, home:{shopee:1,tiktok:0,lazada:1}, phone:{shopee:3,tiktok:1,lazada:2} };
 function renderCompare(v){
-  const g = CMP[$('cmpCat').value];
+  const g = CMP[$('cmpCat').value], target = num('cmpTarget');
   const rows = ['shopee','tiktok','lazada'].map(k => { const pr = PRESETS[k], c = pr.cats[g[k]];
-    return { name:pr.name, cat:c[0], b: breakdown(Object.assign({}, v, {comm:c[1], prog:c[2], trans:pr.trans, cap:pr.cap, fixed:pr.fixed}), v.price) }; });
+    const vv = Object.assign({}, v, {comm:c[1], prog:c[2], trans:pr.trans, cap:pr.cap, fixed:pr.fixed});
+    return { name:pr.name, cat:c[0], b: breakdown(vv, v.price), need: priceForNet(vv, target) }; });
   const best = Math.max(...rows.map(r => r.b.net)), span = Math.max(1, ...rows.map(r => Math.abs(r.b.net)));
   $('cmpOut').innerHTML = rows.map(r => { const top = r.b.net === best;
     return `<div class="cmp-row${top ? ' best' : ''}"><div class="cmp-name"><b>${esc(r.name)}</b><small>${esc(r.cat)}</small></div>
       <div class="cmp-bar"><i style="width:${Math.max(2, Math.abs(r.b.net) / span * 100)}%;background:${r.b.net < 0 ? 'var(--bad)' : 'var(--good)'}"></i></div>
-      <div class="cmp-num"><span>ค่าธรรมเนียม ${baht(r.b.fees)}</span><strong>${baht(r.b.net)} ฿</strong></div>
+      <div class="cmp-num"><span>ค่าธรรมเนียม ${baht(r.b.fees)}</span><strong>${baht(r.b.net)} ฿</strong><span>${r.need == null ? 'ตั้งราคาเท่าไรก็ไม่ถึงเป้า' : 'อยากได้ ' + baht(target) + ' ฿ ต้องตั้งราคา <b>' + baht(Math.ceil(r.need)) + ' ฿</b>'}</span></div>
       ${top ? `<span class="pill ${r.b.net < 0 ? 'bad' : 'good'}">${r.b.net < 0 ? 'ขาดทุนน้อยที่สุด' : 'กำไรมากที่สุด'}</span>` : `<span class="pill warn">น้อยกว่า ${baht(best - r.b.net)} ฿</span>`}</div>`; }).join('');
 }
 
@@ -577,6 +612,7 @@ $('platform').addEventListener('change', fillCats);
 $('category').addEventListener('change', applyPreset);
 $('cmpCat').addEventListener('change', calc);
 $('v-profit').addEventListener('input', ev => { if (ev.target.tagName === 'INPUT') calc(); });
+$('saveImg').addEventListener('click', () => (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(saveCard));
 $('itSave').addEventListener('click', () => { items.push({ name: $('itName').value.trim() || 'สินค้า ' + (items.length + 1), v: inputs(), orders: num('orders') }); $('itName').value = ''; saveItems(); });
 $('itOut').addEventListener('click', e => {
   const l = e.target.closest('[data-load]'), d = e.target.closest('[data-del]');
