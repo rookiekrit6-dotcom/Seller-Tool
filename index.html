@@ -174,6 +174,16 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
 .chk label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
 .chk input{width:18px;height:18px;margin-top:3px;flex:none;accent-color:var(--brand)}
 .chk input:checked+span{color:var(--ink-soft);text-decoration:line-through}
+
+/* notice shown inside in-app browsers, where printing and saving files often fail */
+.inapp{max-width:1080px;margin:12px auto 0;padding:10px 14px;border-radius:12px;background:#fff4d6;border:1px solid #e2a100;color:#5a3d00;font-size:.92rem}
+.site-ft .sis{display:flex;flex-wrap:wrap;gap:6px 14px;flex-basis:100%}
+
+/* jump chips for the long profit page */
+.jump{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
+.jump::-webkit-scrollbar{display:none}
+.jump button{flex:none;font:inherit;font-size:.88rem;font-weight:600;padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+#dlgImg img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -193,6 +203,10 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
 <div class="wrap">
 
 <section class="view" id="v-profit">
+  <div class="jump" role="group" aria-label="ไปยังหัวข้อ">
+    <button type="button" data-jump="j-cmp">เทียบแพลตฟอร์ม</button><button type="button" data-jump="j-promo">โปรโมชัน</button><button type="button" data-jump="j-set">ขายเป็นเซ็ต</button>
+    <button type="button" data-jump="j-save">สินค้าที่บันทึก</button><button type="button" data-jump="j-chk">เช็กลิสต์</button><button type="button" data-jump="j-gloss">คำที่ควรรู้</button><button type="button" data-jump="j-faq">คำถามที่พบบ่อย</button>
+  </div>
   <div class="grid two">
     <div class="card">
       <h2>ข้อมูลสินค้า</h2>
@@ -247,7 +261,7 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
     </div>
   </div>
   <div class="card" style="margin-top:16px">
-    <h2>ขายที่ไหนเหลือกำไรมากกว่า</h2>
+    <h2 id="j-cmp" style="scroll-margin-top:12px">ขายที่ไหนเหลือกำไรมากกว่า</h2>
     <div class="fields"><label class="f">กลุ่มสินค้า
       <select id="cmpCat"><option value="fashion">แฟชั่น เสื้อผ้า</option><option value="home">ของใช้ อาหาร ความงาม</option><option value="phone">มือถือ อิเล็กทรอนิกส์</option></select></label>
       <label class="f">กำไรที่อยากได้ต่อออเดอร์ (บาท)<input type="number" id="cmpTarget" min="0" step="1" value="80" inputmode="decimal"></label></div>
@@ -255,13 +269,13 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
     <p class="note">ใช้ราคาและต้นทุนชุดเดียวกับที่กรอกด้านบน คิดด้วยอัตราตั้งต้นโดยประมาณของแต่ละแพลตฟอร์ม ยังไม่รวมค่าโปรแกรมเสริมที่ร้านสมัครเอง อัตราจริงของร้านคุณอาจต่างจากนี้</p>
   </div>
   <div class="card" style="margin-top:16px">
-    <h2>จัดโปรโมชันและงบโฆษณา</h2>
+    <h2 id="j-promo" style="scroll-margin-top:12px">จัดโปรโมชันและงบโฆษณา</h2>
     <div class="fields"><label class="f">ลดราคาจากราคาขายกี่ %<input type="number" id="promoPct" min="0" max="90" step="1" value="10" inputmode="decimal"></label></div>
     <div class="kv" id="promoOut" aria-live="polite"></div>
     <p class="note">ส่วนลดคิดเป็นส่วนลดที่ร้านออกเองทั้งหมด งบโฆษณาสูงสุดคือค่าโฆษณาต่อออเดอร์ที่ทำให้กำไรเหลือ 0 พอดีที่ราคาขายปกติ</p>
   </div>
   <div class="card" style="margin-top:16px">
-    <h2>ขายเป็นเซ็ต</h2>
+    <h2 id="j-set" style="scroll-margin-top:12px">ขายเป็นเซ็ต</h2>
     <div class="fields">
       <label class="f">จำนวนชิ้นต่อเซ็ต<input type="number" id="bN" min="2" max="20" step="1" value="2" inputmode="numeric"></label>
       <label class="f">ส่วนลดเมื่อซื้อเป็นเซ็ต %<input type="number" id="bPct" min="0" max="90" step="1" value="5" inputmode="decimal"></label>
@@ -270,14 +284,14 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
     <p class="note">คิดว่าทั้งเซ็ตส่งในกล่องเดียว จึงใช้ค่ากล่อง ค่าส่ง ค่าโฆษณา และค่าคงที่ต่อออเดอร์เพียงครั้งเดียว ถ้าเซ็ตของคุณต้องใช้กล่องใหญ่ขึ้นหรือค่าส่งแพงขึ้น ให้ปรับตัวเลขด้านบนก่อน</p>
   </div>
   <div class="card" style="margin-top:16px">
-    <h2>สินค้าที่บันทึกไว้</h2>
+    <h2 id="j-save" style="scroll-margin-top:12px">สินค้าที่บันทึกไว้</h2>
     <div class="row"><label class="f" style="flex:1;min-width:180px">ชื่อสินค้า<input type="text" id="itName" placeholder="เช่น กระเป๋าผ้าแคนวาส"></label>
       <button class="btn" id="itSave" type="button" style="align-self:flex-end"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>บันทึกสินค้านี้</button></div>
     <div id="itOut"></div>
     <p class="note">บันทึกตัวเลขที่กรอกอยู่ด้านบนเป็นสินค้า 1 รายการ เพื่อดูกำไรรวมของทั้งร้าน รายการเก็บอยู่ในเบราว์เซอร์ของเครื่องนี้เท่านั้น</p>
   </div>
   <div class="card" style="margin-top:16px">
-    <h2>เช็กลิสต์ก่อนลงขายสินค้า</h2>
+    <h2 id="j-chk" style="scroll-margin-top:12px">เช็กลิสต์ก่อนลงขายสินค้า</h2>
     <ul class="chk">
       <li><label><input type="checkbox"><span>รูปสินค้าชัด พื้นหลังสะอาด และมีอย่างน้อย 5 รูปจากหลายมุม</span></label></li>
       <li><label><input type="checkbox"><span>ชื่อสินค้ามีคำที่ลูกค้าใช้ค้นหา เช่น ประเภท วัสดุ ขนาด</span></label></li>
@@ -292,7 +306,7 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
     </ul>
   </div>
   <div class="card gloss" style="margin-top:16px">
-    <h2>คำที่ควรรู้ก่อนตั้งราคา</h2>
+    <h2 id="j-gloss" style="scroll-margin-top:12px">คำที่ควรรู้ก่อนตั้งราคา</h2>
     <details><summary>ค่าคอมมิชชัน</summary><p>ส่วนแบ่งที่แพลตฟอร์มหักจากราคาสินค้าทุกครั้งที่ขายได้ อัตราต่างกันตามหมวดสินค้าและประเภทร้าน</p></details>
     <details><summary>ค่าธุรกรรม</summary><p>ค่าบริการรับชำระเงิน คิดเป็นเปอร์เซ็นต์จากยอดที่ลูกค้าจ่าย ซึ่งมักรวมค่าส่งด้วย</p></details>
     <details><summary>ค่าโปรแกรมเสริม</summary><p>ค่าบริการเพิ่มเมื่อร้านเข้าร่วมโปรแกรมของแพลตฟอร์ม เช่น โปรแกรมส่งฟรีหรือโปรแกรมส่วนลด ร้านที่ไม่ได้สมัครไม่ต้องจ่าย</p></details>
@@ -302,7 +316,7 @@ table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:1
     <details><summary>อัตรากำไร</summary><p>กำไรสุทธิเทียบกับราคาที่ขายได้ เช่น ขาย 200 บาท เหลือกำไร 40 บาท อัตรากำไรคือ 20%</p></details>
   </div>
   <div class="card gloss" style="margin-top:16px">
-    <h2>คำถามที่คนขายของถามบ่อย</h2>
+    <h2 id="j-faq" style="scroll-margin-top:12px">คำถามที่คนขายของถามบ่อย</h2>
     <details><summary>ขายดีแต่ทำไมไม่เหลือกำไร</summary><p>ส่วนใหญ่เกิดจากค่าใช้จ่ายเล็ก ๆ ที่ไม่ได้นับ เช่น ค่ากล่อง ค่าโฆษณา ส่วนลดที่ร้านออกเอง และค่าธรรมเนียมหลายรายการรวมกัน ลองกรอกให้ครบทุกช่องในหน้าคำนวณกำไร แล้วดูว่ารายการไหนกินสัดส่วนมากที่สุด</p></details>
     <details><summary>ควรตั้งกำไรกี่เปอร์เซ็นต์</summary><p>ไม่มีตัวเลขเดียวที่ใช้ได้กับทุกร้าน สินค้าที่ขายได้เร็วและซื้อซ้ำบ่อยอยู่ได้ด้วยกำไรต่อชิ้นน้อย ส่วนสินค้าที่ขายช้าหรือมีโอกาสตีคืนสูงต้องเผื่อกำไรมากกว่า จุดเริ่มที่ปลอดภัยคือให้กำไรยังเป็นบวกหลังจัดโปรโมชันที่คุณตั้งใจจะทำ</p></details>
     <details><summary>เข้าโปรแกรมส่งฟรีคุ้มไหม</summary><p>คุ้มเมื่อยอดขายที่เพิ่มขึ้นมากพอจะชดเชยค่าบริการที่ถูกหักเพิ่ม ลองใส่อัตราของโปรแกรมในช่องค่าโปรแกรมเสริม ดูกำไรต่อออเดอร์ที่ลดลง แล้วประเมินว่าต้องขายเพิ่มกี่ออเดอร์จึงได้กำไรรวมเท่าเดิม</p></details>
@@ -414,7 +428,7 @@ COD 350</textarea></label>
           <select id="lSize"><option value="single">สติกเกอร์ 100 × 150 มม. (1 ใบต่อแผ่น)</option><option value="a4">A4 (4 ใบต่อแผ่น)</option></select></label>
       </div>
       <div class="row" style="margin-top:14px"><button class="btn" id="lPrint" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><rect x="7" y="14" width="10" height="7"/></svg>พิมพ์ใบปะหน้า</button></div>
-      <p class="note">ข้อมูลที่อยู่ทั้งหมดอยู่ในเครื่องของคุณเท่านั้น ไม่ถูกส่งไปที่ใด</p>
+      <p class="note">ข้อมูลที่อยู่ทั้งหมดอยู่ในเครื่องของคุณเท่านั้น ไม่ถูกส่งไปที่ใด ถ้ากดพิมพ์แล้วไม่มีอะไรเกิดขึ้น ให้เปิดเว็บนี้ใน Chrome หรือ Safari แทนการเปิดจากในแอป Facebook หรือ LINE</p>
     </div>
     <div class="card">
       <h2>ตัวอย่าง <span id="lCount" class="note"></span></h2>
@@ -425,7 +439,7 @@ COD 350</textarea></label>
 
 </div>
 </main>
-<footer class="site-ft"><button type="button" data-open="dlgGuide">วิธีใช้</button><button type="button" data-open="dlgPolicy">นโยบายความเป็นส่วนตัวและความปลอดภัย</button><a href="https://github.com/rookiekrit6-dotcom/Seller-Tool/issues">แจ้งปัญหาหรือเสนอแนะ</a><span>ใช้ฟรี ไม่ต้องสมัครสมาชิก</span></footer>
+<footer class="site-ft"><button type="button" data-open="dlgGuide">วิธีใช้</button><button type="button" data-open="dlgPolicy">นโยบายความเป็นส่วนตัวและความปลอดภัย</button><a href="https://github.com/rookiekrit6-dotcom/Seller-Tool/issues">แจ้งปัญหาหรือเสนอแนะ</a><span>ใช้ฟรี ไม่ต้องสมัครสมาชิก</span><span class="sis">เครื่องมืออื่นจากผู้จัดทำเดียวกัน: <a href="https://rookiekrit6-dotcom.github.io/Worksheet/">ใบงานพร้อมพิมพ์</a><a href="https://rookiekrit6-dotcom.github.io/FoodTool/">สูตรเปิดร้าน</a></span></footer>
 <dialog class="dlg" id="dlgGuide" aria-labelledby="dlgGuideT"><div class="dlg-h"><b id="dlgGuideT">วิธีใช้ กำไรแม่ค้า</b><button class="dlg-x" type="button" data-close>ปิด</button></div><div class="dlg-b"><h3>คำนวณกำไร</h3><ol><li>เลือกแพลตฟอร์มและหมวดสินค้า ระบบจะใส่อัตราค่าธรรมเนียมตั้งต้นให้</li><li>กรอกราคาขาย ต้นทุนสินค้า ค่าแพ็ก ค่าส่ง และค่าโฆษณาต่อออเดอร์</li><li>เปิด Seller Center ของร้านคุณ แล้วแก้อัตราค่าธรรมเนียมในเว็บให้ตรงกับของจริง</li><li>ดูกำไรสุทธิ ราคาเท่าทุน และราคาที่ควรตั้งเพื่อให้ได้กำไรตามเป้า</li><li>เลื่อนลงไปดูตารางเทียบว่าขายที่แพลตฟอร์มไหนเหลือกำไรมากกว่า</li><li>กดบันทึกสินค้านี้ เพื่อเก็บสินค้าหลายรายการและดูกำไรรวมต่อเดือนของทั้งร้าน</li></ol>
 <h3>แคปชันขายของ</h3><ol><li>กรอกชื่อสินค้า ราคา จุดเด่นบรรทัดละ 1 ข้อ และโปรโมชัน</li><li>กดสร้างแคปชัน จะได้ 8 แบบให้เลือก</li><li>กดคัดลอกแบบที่ชอบ แล้วอ่านทวนและปรับถ้อยคำให้ตรงกับสินค้าจริงก่อนโพสต์</li></ol>
 <h3>สต็อกและค่าส่ง</h3><ol><li>ใส่สต็อกที่มี ยอดขายต่อวัน และจำนวนวันที่รอของ เพื่อดูว่าควรสั่งของรอบใหม่เมื่อไร</li><li>ใส่ขนาดกล่องและน้ำหนักจริง เพื่อดูว่าขนส่งจะคิดค่าส่งจากน้ำหนักใด</li></ol>
@@ -445,6 +459,8 @@ COD 350</textarea></label>
 <p>ตัวเลขและเนื้อหาที่เว็บนี้แสดงเป็นการประมาณเพื่อช่วยตัดสินใจ กรุณาตรวจสอบกับข้อมูลจริงของคุณก่อนนำไปใช้ ผู้จัดทำไม่รับผิดชอบต่อความเสียหายที่เกิดจากการนำผลลัพธ์ไปใช้โดยไม่ตรวจสอบ</p>
 <h3>การเปลี่ยนแปลงและการติดต่อ</h3>
 <p>หากในอนาคตมีการเพิ่มระบบนับผู้เข้าชม โฆษณา หรือการเก็บข้อมูลแบบอื่น นโยบายนี้จะได้รับการปรับปรุงก่อนเปิดใช้ ติดต่อผู้จัดทำได้ที่หน้า <a href="https://github.com/rookiekrit6-dotcom/Seller-Tool/issues">แจ้งปัญหาหรือเสนอแนะ</a></p></div></dialog>
+<dialog class="dlg" id="dlgImg" aria-labelledby="dlgImgT"><div class="dlg-h"><b id="dlgImgT">รูปสรุปกำไร</b><button class="dlg-x" type="button" data-close>ปิด</button></div>
+<div class="dlg-b"><p style="margin-top:10px"><a class="btn" id="imgDl" download="kamrai-maekha.png" href="#" style="text-decoration:none">บันทึกรูปลงเครื่อง</a></p><p><small>ถ้ากดปุ่มแล้วไม่มีอะไรเกิดขึ้น ให้กดค้างที่รูปด้านล่าง แล้วเลือกบันทึกรูปภาพ</small></p><img id="imgPrev" alt="รูปสรุปกำไรต่อออเดอร์"></div></dialog>
 <div id="printArea"></div>
 
 <script>
@@ -571,7 +587,7 @@ function saveCard(){
   for (let i = -40; i < 1100; i += 56){ x.fillStyle = '#f2a31b'; x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 28, 0); x.lineTo(i + 6, 22); x.lineTo(i - 22, 22); x.fill(); }
   x.fillStyle = '#fff'; x.textBaseline = 'alphabetic'; x.font = F(700, 62); x.fillText(($('itName').value.trim() || 'สรุปกำไรต่อ 1 ออเดอร์').slice(0, 26), 60, 135);
   x.font = F(400, 34); x.fillText(PRESETS[$('platform').value].name + '  ·  ราคาขาย ' + baht(v.price) + ' บาท', 60, 198);
-  x.fillStyle = '#fff'; x.beginPath(); x.roundRect(40, 290, 1000, 900, 28); x.fill();
+  x.fillStyle = '#fff'; x.beginPath(); if (x.roundRect) x.roundRect(40, 290, 1000, 900, 28); else x.rect(40, 290, 1000, 900); x.fill();
   const rows = [['ราคาหลังหักส่วนลดร้าน', b.base], ['ค่าคอมมิชชัน', -b.comm], ['ค่าโปรแกรมเสริม', -b.prog], ['ค่าธุรกรรม', -b.trans], ['ค่าคงที่ต่อออเดอร์', -b.fixed],
     ['ต้นทุนสินค้า', -v.cost], ['ค่ากล่องและแพ็ก', -v.pack], ['ค่าส่งที่ร้านออก', -v.shipSeller], ['ค่าโฆษณา', -v.ads]].filter((r, i) => i === 0 || r[1] !== 0);
   let y = 370;
@@ -584,7 +600,8 @@ function saveCard(){
   x.font = F(600, 36); x.fillText(b.net < 0 ? 'ขาดทุน' : 'อัตรากำไร ' + b.margin.toFixed(1) + '%', 990, y + 82);
   x.textAlign = 'left'; x.fillStyle = '#4d6661'; x.font = F(400, 30); x.fillText('คำนวณด้วย กำไรแม่ค้า  ·  ' + (location.host + location.pathname).replace(/\/$/, ''), 60, 1270);
   x.fillText('ตัวเลขเป็นการประมาณ ตรวจอัตราค่าธรรมเนียมจริงใน Seller Center', 60, 1314);
-  c.toBlob(bl => { const a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = 'kamrai-maekha.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); }, 'image/png');
+  const url = c.toDataURL('image/png');
+  $('imgPrev').src = url; $('imgDl').href = url; $('dlgImg').showModal();
 }
 // same costs, each platform's default rates for the chosen product group
 const CMP = { fashion:{shopee:0,tiktok:0,lazada:0}, home:{shopee:1,tiktok:0,lazada:1}, phone:{shopee:3,tiktok:1,lazada:2} };
@@ -717,10 +734,17 @@ const savedFrom = store.get('km_from'); if (savedFrom) $('lFrom').value = savedF
 showTab(); renderCaptions(); renderLabels(); renderItems(); calcStock(); renderCamp();
 /* ---------- guide + policy dialogs ---------- */
 document.addEventListener('click', e => {
+  const j = e.target.closest('[data-jump]'); if (j){ document.getElementById(j.dataset.jump).scrollIntoView({behavior:'smooth', block:'start'}); return; }
   const o = e.target.closest('[data-open]'); if (o){ const d = document.getElementById(o.dataset.open); if (d && d.showModal) d.showModal(); return; }
   const c = e.target.closest('[data-close]'); if (c){ c.closest('dialog').close(); return; }
   if (e.target.tagName === 'DIALOG') e.target.close();
 });
+/* ---------- in-app browser notice ---------- */
+if (/FBAN|FBAV|FB_IAB|Line\/|Instagram|TikTok/i.test(navigator.userAgent)){
+  const n = document.createElement('div'); n.className = 'inapp'; n.setAttribute('role', 'note');
+  n.textContent = 'คุณกำลังเปิดเว็บนี้จากในแอป ปุ่มพิมพ์และปุ่มบันทึกรูปอาจใช้ไม่ได้ แนะนำให้กดเมนูมุมขวาบนแล้วเลือกเปิดในเบราว์เซอร์ เช่น Chrome หรือ Safari';
+  const m = document.querySelector('main'); m.insertBefore(n, m.firstChild);
+}
 </script>
 </body>
 </html>
