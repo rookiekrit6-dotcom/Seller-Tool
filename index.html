@@ -127,13 +127,31 @@ nav.tabs::-webkit-scrollbar{display:none}
 .cmp-num span{display:block;font-size:.78rem;color:var(--ink-soft);font-family:var(--f-body)}
 .cmp-num strong{font-size:1.15rem}
 @media(max-width:700px){.cmp-row{grid-template-columns:1fr auto}.cmp-bar{grid-column:1/-1;order:3}.cmp-row .pill{grid-column:1/-1;order:4;justify-self:start}}
+
+/* guide + policy dialogs, site footer */
+.help-btn{font:inherit;font-size:.85rem;font-weight:600;margin-left:8px;padding:3px 12px;border-radius:999px;border:1.5px solid rgba(255,255,255,.75);background:transparent;color:#fff;cursor:pointer;white-space:nowrap}
+.help-btn:hover{background:rgba(255,255,255,.16)}
+.site-ft{max-width:1080px;margin:0 auto;padding:4px 16px 40px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:.9rem;color:var(--ink-soft)}
+.site-ft button,.site-ft a{font:inherit;background:none;border:0;padding:0;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+dialog.dlg{border:0;border-radius:16px;padding:0;width:100%;max-width:min(640px,calc(100% - 24px));max-height:calc(100% - 32px);background:#fff;color:var(--ink);box-shadow:0 24px 60px -20px rgba(0,0,0,.55)}
+dialog.dlg::backdrop{background:rgba(10,20,18,.5)}
+.dlg .dlg-h{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff}
+.dlg .dlg-h b{font-size:1.1rem}
+.dlg .dlg-x{font:inherit;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:6px 14px;cursor:pointer}
+.dlg .dlg-b{padding:6px 18px 22px;font-size:.97rem;line-height:1.65}
+.dlg .dlg-b h3{margin:16px 0 4px;font-size:1rem;color:var(--ink);font-weight:700}
+.dlg .dlg-b p{margin:0 0 8px}
+.dlg .dlg-b ol,.dlg .dlg-b ul{margin:0 0 8px;padding-left:1.3em;display:block}
+.dlg .dlg-b li{margin-bottom:4px}
+.dlg .dlg-b small{color:var(--ink-soft)}
+@media print{.site-ft,dialog.dlg{display:none !important}}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="wrap">
     <h1><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 13l15-8 15 8v15l-15 8-15-8z" fill="#f2a31b"/><path d="M5 13l15 8 15-8M20 21v15" fill="none" stroke="#10302b" stroke-width="2.2" stroke-linejoin="round"/><path d="M12.5 9l15 8v6" fill="none" stroke="#fff" stroke-width="2.2"/></svg>กำไรแม่ค้า</h1>
-    <p class="sub">เครื่องมือฟรีสำหรับคนขายของออนไลน์</p>
+    <p class="sub">เครื่องมือฟรีสำหรับคนขายของออนไลน์<button class="help-btn" type="button" data-open="dlgGuide">วิธีใช้</button></p>
     <nav class="tabs" aria-label="เครื่องมือ">
       <a href="#profit" data-tab="profit"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>คำนวณกำไร</a>
       <a href="#caption" data-tab="caption"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>แคปชันขายของ</a>
@@ -204,6 +222,12 @@ nav.tabs::-webkit-scrollbar{display:none}
     <div class="cmp" id="cmpOut" aria-live="polite"></div>
     <p class="note">ใช้ราคาและต้นทุนชุดเดียวกับที่กรอกด้านบน คิดด้วยอัตราตั้งต้นโดยประมาณของแต่ละแพลตฟอร์ม ยังไม่รวมค่าโปรแกรมเสริมที่ร้านสมัครเอง อัตราจริงของร้านคุณอาจต่างจากนี้</p>
   </div>
+  <div class="card" style="margin-top:16px">
+    <h2>จัดโปรโมชันและงบโฆษณา</h2>
+    <div class="fields"><label class="f">ลดราคาจากราคาขายกี่ %<input type="number" id="promoPct" min="0" max="90" step="1" value="10" inputmode="decimal"></label></div>
+    <div class="kv" id="promoOut" aria-live="polite"></div>
+    <p class="note">ส่วนลดคิดเป็นส่วนลดที่ร้านออกเองทั้งหมด งบโฆษณาสูงสุดคือค่าโฆษณาต่อออเดอร์ที่ทำให้กำไรเหลือ 0 พอดีที่ราคาขายปกติ</p>
+  </div>
 </section>
 
 <section class="view" id="v-caption">
@@ -268,7 +292,25 @@ COD 350</textarea></label>
 
 </div>
 </main>
-<footer class="ft">กำไรแม่ค้า เครื่องมือฟรีสำหรับคนขายของออนไลน์ ตัวเลขทั้งหมดเป็นการประมาณเพื่อช่วยตัดสินใจ</footer>
+<footer class="site-ft"><button type="button" data-open="dlgGuide">วิธีใช้</button><button type="button" data-open="dlgPolicy">นโยบายความเป็นส่วนตัวและความปลอดภัย</button><a href="https://github.com/rookiekrit6-dotcom/Seller-Tool/issues">แจ้งปัญหาหรือเสนอแนะ</a><span>ใช้ฟรี ไม่ต้องสมัครสมาชิก</span></footer>
+<dialog class="dlg" id="dlgGuide" aria-labelledby="dlgGuideT"><div class="dlg-h"><b id="dlgGuideT">วิธีใช้ กำไรแม่ค้า</b><button class="dlg-x" type="button" data-close>ปิด</button></div><div class="dlg-b"><h3>คำนวณกำไร</h3><ol><li>เลือกแพลตฟอร์มและหมวดสินค้า ระบบจะใส่อัตราค่าธรรมเนียมตั้งต้นให้</li><li>กรอกราคาขาย ต้นทุนสินค้า ค่าแพ็ก ค่าส่ง และค่าโฆษณาต่อออเดอร์</li><li>เปิด Seller Center ของร้านคุณ แล้วแก้อัตราค่าธรรมเนียมในเว็บให้ตรงกับของจริง</li><li>ดูกำไรสุทธิ ราคาเท่าทุน และราคาที่ควรตั้งเพื่อให้ได้กำไรตามเป้า</li><li>เลื่อนลงไปดูตารางเทียบว่าขายที่แพลตฟอร์มไหนเหลือกำไรมากกว่า</li></ol>
+<h3>แคปชันขายของ</h3><ol><li>กรอกชื่อสินค้า ราคา จุดเด่นบรรทัดละ 1 ข้อ และโปรโมชัน</li><li>กดสร้างแคปชัน จะได้ 4 แบบให้เลือก</li><li>กดคัดลอกแบบที่ชอบ แล้วอ่านทวนและปรับถ้อยคำให้ตรงกับสินค้าจริงก่อนโพสต์</li></ol>
+<h3>ใบปะหน้าพัสดุ</h3><ol><li>กรอกชื่อและที่อยู่ผู้ส่ง ระบบจะจำไว้ในเครื่องนี้</li><li>วางที่อยู่ลูกค้า เว้น 1 บรรทัดว่างระหว่างแต่ละราย บรรทัดแรกคือชื่อผู้รับ</li><li>ถ้าเก็บเงินปลายทาง เพิ่มบรรทัด COD ตามด้วยยอดเงิน</li><li>เลือกขนาดกระดาษ แล้วกดพิมพ์ใบปะหน้า</li></ol></div></dialog>
+<dialog class="dlg" id="dlgPolicy" aria-labelledby="dlgPolicyT"><div class="dlg-h"><b id="dlgPolicyT">นโยบายความเป็นส่วนตัวและความปลอดภัยของข้อมูล</b><button class="dlg-x" type="button" data-close>ปิด</button></div><div class="dlg-b">
+<p><small>ปรับปรุงล่าสุด 15 พฤศจิกายน 2569</small></p>
+<p>กำไรแม่ค้าเป็นเครื่องมือที่ทำงานในเบราว์เซอร์ของคุณทั้งหมด ไม่มีระบบสมาชิก และไม่มีเซิร์ฟเวอร์ของเราที่รับหรือเก็บข้อมูลที่คุณกรอก</p>
+<h3>ข้อมูลที่เว็บนี้เก็บ</h3>
+<ul><li>ชื่อและที่อยู่ผู้ส่งที่คุณกรอกในหน้าใบปะหน้า เก็บไว้ในเบราว์เซอร์ของเครื่องนี้เพื่อไม่ต้องกรอกซ้ำ</li><li>ราคา ต้นทุน ข้อความแคปชัน และที่อยู่ลูกค้า ไม่ถูกบันทึก และจะหายไปเมื่อปิดหรือรีเฟรชหน้าเว็บ</li></ul>
+<h3>สิ่งที่เว็บนี้ไม่ทำ</h3>
+<ul><li>ไม่มีการสมัครสมาชิก ไม่ขออีเมลหรือรหัสผ่านของคุณ</li><li>ไม่ส่งข้อมูลที่คุณกรอกออกไปนอกเครื่อง</li><li>ไม่ใช้คุกกี้ติดตาม ไม่มีโฆษณา และไม่มีระบบวิเคราะห์ผู้เข้าชม ณ วันที่ปรับปรุงนโยบายนี้</li></ul>
+<h3>ผู้ให้บริการภายนอก</h3>
+<ul><li>เว็บนี้ฝากไฟล์ไว้กับ GitHub Pages ซึ่งอาจบันทึกข้อมูลทางเทคนิคของการเข้าชม เช่น หมายเลข IP ตามนโยบายของ GitHub</li><li>ตัวอักษรบนหน้าเว็บโหลดจาก Google Fonts เบราว์เซอร์ของคุณจึงติดต่อเซิร์ฟเวอร์ของ Google เพื่อดาวน์โหลดไฟล์ตัวอักษร</li></ul>
+<h3>การดูแลข้อมูลของคุณเอง</h3>
+<ul><li>ที่อยู่ลูกค้าเป็นข้อมูลส่วนบุคคลของผู้อื่น ถ้าใช้คอมพิวเตอร์ร่วมกับคนอื่น ให้ปิดหน้าเว็บหลังพิมพ์เสร็จ และอย่าทิ้งใบปะหน้าที่พิมพ์เสียไว้ในที่สาธารณะ</li><li>ลบข้อมูลทั้งหมดได้ด้วยการล้างข้อมูลเว็บไซต์นี้ในการตั้งค่าของเบราว์เซอร์</li><li>ข้อมูลไม่ได้สำรองไว้ที่ใด ถ้าล้างข้อมูลเบราว์เซอร์หรือเปลี่ยนเครื่อง ข้อมูลจะหายไป</li></ul>
+<h3>ข้อจำกัดของผลลัพธ์</h3>
+<p>ตัวเลขและเนื้อหาที่เว็บนี้แสดงเป็นการประมาณเพื่อช่วยตัดสินใจ กรุณาตรวจสอบกับข้อมูลจริงของคุณก่อนนำไปใช้ ผู้จัดทำไม่รับผิดชอบต่อความเสียหายที่เกิดจากการนำผลลัพธ์ไปใช้โดยไม่ตรวจสอบ</p>
+<h3>การเปลี่ยนแปลงและการติดต่อ</h3>
+<p>หากในอนาคตมีการเพิ่มระบบนับผู้เข้าชม โฆษณา หรือการเก็บข้อมูลแบบอื่น นโยบายนี้จะได้รับการปรับปรุงก่อนเปิดใช้ ติดต่อผู้จัดทำได้ที่หน้า <a href="https://github.com/rookiekrit6-dotcom/Seller-Tool/issues">แจ้งปัญหาหรือเสนอแนะ</a></p></div></dialog>
 <div id="printArea"></div>
 
 <script>
@@ -359,6 +401,16 @@ function calc(){
   $('oTP').textContent = tp == null ? 'ทำไม่ได้' : baht(Math.ceil(tp)) + ' ฿';
   $('oMonth').textContent = baht(b.net * num('orders')) + ' ฿';
   renderCompare(v);
+  renderPromo(v, b);
+}
+function renderPromo(v, b){
+  const pct = Math.min(90, num('promoPct')), cut = v.price * pct / 100;
+  const pb = breakdown(Object.assign({}, v, {discount: v.discount + cut}), v.price);
+  const more = b.net > 0 && pb.net > 0 ? (b.net / pb.net - 1) * 100 : null, maxAds = b.net + v.ads;
+  $('promoOut').innerHTML = `<div><span>ราคาหลังลด ${pct}%</span><strong>${baht(pb.base)} ฿</strong></div>
+    <div><span>กำไรต่อออเดอร์หลังลด</span><strong style="color:${pb.net < 0 ? 'var(--bad)' : 'inherit'}">${baht(pb.net)} ฿</strong></div>
+    <div><span>ต้องขายเพิ่มเพื่อให้กำไรรวมเท่าเดิม</span><strong>${more == null ? (pb.net <= 0 ? 'โปรนี้ขาดทุน' : '-') : '+' + more.toFixed(0) + '%'}</strong></div>
+    <div><span>ค่าโฆษณาสูงสุดต่อออเดอร์</span><strong>${maxAds > 0 ? baht(maxAds) + ' ฿' : 'ไม่มีงบเหลือ'}</strong></div>`;
 }
 // same costs, each platform's default rates for the chosen product group
 const CMP = { fashion:{shopee:0,tiktok:0,lazada:0}, home:{shopee:1,tiktok:0,lazada:1}, phone:{shopee:3,tiktok:1,lazada:2} };
@@ -440,6 +492,12 @@ $('v-label').addEventListener('input', renderLabels);
 $('lPrint').addEventListener('click', () => { renderLabels(); window.print(); });
 const savedFrom = store.get('km_from'); if (savedFrom) $('lFrom').value = savedFrom;
 showTab(); renderCaptions(); renderLabels();
+/* ---------- guide + policy dialogs ---------- */
+document.addEventListener('click', e => {
+  const o = e.target.closest('[data-open]'); if (o){ const d = document.getElementById(o.dataset.open); if (d && d.showModal) d.showModal(); return; }
+  const c = e.target.closest('[data-close]'); if (c){ c.closest('dialog').close(); return; }
+  if (e.target.tagName === 'DIALOG') e.target.close();
+});
 </script>
 </body>
 </html>
