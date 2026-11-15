@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>กำไรแม่ค้า</title>
+<meta name="description" content="คำนวณกำไรหลังหักค่าธรรมเนียม Shopee TikTok Shop Lazada สร้างแคปชันขายของ และพิมพ์ใบปะหน้าพัสดุ ใช้ฟรี">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* layout: sticky tab bar, one working column on phone, form + result side by side from 860px */
+:root{
+  --ink:#10302b; --ink-soft:#4d6661; --paper:#f3f6f4; --card:#ffffff; --line:#d5dfdb;
+  --brand:#0d6b5c; --brand-ink:#ffffff; --accent:#f2a31b;
+  --good:#16794c; --good-bg:#dff3e8; --warn:#96610a; --warn-bg:#fdf0d2; --bad:#b3261e; --bad-bg:#fbe1df;
+  --f-body:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif; --f-num:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+header.top{background:var(--brand);color:var(--brand-ink);padding:18px 16px 0}
+.wrap{max-width:1040px;margin:0 auto}
+h1{margin:0;font-size:1.5rem;font-weight:700;letter-spacing:.01em}
+.sub{margin:2px 0 14px;opacity:.85;font-size:.95rem}
+nav.tabs{display:flex;gap:4px;overflow-x:auto}
+nav.tabs a{flex:none;padding:10px 16px;border-radius:10px 10px 0 0;color:var(--brand-ink);text-decoration:none;font-weight:600;opacity:.8}
+nav.tabs a[aria-current="page"]{background:var(--paper);color:var(--brand);opacity:1}
+main{padding:20px 16px 48px}
+section.view{display:none}
+section.view.on{display:block}
+.grid{display:grid;gap:16px}
+@media(min-width:860px){.grid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+h2{margin:0 0 12px;font-size:1.1rem}
+h3{margin:16px 0 8px;font-size:.95rem;color:var(--ink-soft);font-weight:600}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label.f{display:grid;gap:4px;font-size:.88rem;color:var(--ink-soft)}
+input,select,textarea,button{font:inherit;color:inherit}
+input[type=number],input[type=text],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input[type=number]{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+textarea{min-height:110px;resize:vertical}
+:is(input,select,textarea,button,a):focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn{border:0;border-radius:10px;padding:11px 18px;background:var(--brand);color:var(--brand-ink);font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--brand);border:1px solid var(--brand)}
+.btn.small{padding:6px 12px;font-size:.88rem}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.note{font-size:.85rem;color:var(--ink-soft);margin:10px 0 0}
+.big{font-family:var(--f-num);font-size:2.4rem;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-weight:600;font-size:.9rem}
+.pill.good{background:var(--good-bg);color:var(--good)} .pill.warn{background:var(--warn-bg);color:var(--warn)} .pill.bad{background:var(--bad-bg);color:var(--bad)}
+.bar{display:flex;height:22px;border-radius:6px;overflow:hidden;margin:14px 0 6px;background:var(--line)}
+.bar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;color:var(--ink-soft)}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+table.t{width:100%;border-collapse:collapse;font-size:.93rem;margin-top:10px}
+table.t td{padding:6px 0;border-bottom:1px solid var(--line)}
+table.t td:last-child{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.t tr.sum td{font-weight:700;border-bottom:0}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
+.kv div{background:var(--paper);border-radius:10px;padding:10px 12px}
+.kv span{display:block;font-size:.8rem;color:var(--ink-soft)}
+.kv strong{font-family:var(--f-num);font-size:1.15rem}
+.cap{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px;background:#fff}
+.cap pre{margin:0 0 10px;white-space:pre-wrap;word-break:break-word;font-family:var(--f-body);font-size:.95rem}
+.cap .row{justify-content:space-between}
+.cap small{color:var(--ink-soft)}
+.labels{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));margin-top:12px}
+.lb{background:#fff;border:1.5px solid #111;border-radius:6px;padding:12px;color:#111;display:flex;flex-direction:column;gap:8px;aspect-ratio:2/3;font-size:.9rem;overflow:hidden}
+.lb .from{font-size:.78em;border-bottom:1px dashed #111;padding-bottom:6px}
+.lb .to{flex:1}
+.lb .to b{font-size:1.35em;display:block;line-height:1.3}
+.lb .tel{font-family:var(--f-num);font-size:1.1em}
+.lb .cod{border:2px solid #111;padding:4px 8px;font-weight:700;align-self:flex-start}
+.lb .tag{font-size:.7em;letter-spacing:.08em}
+#printArea{display:none}
+@media print{
+  body{background:#fff}
+  header.top,main{display:none}
+  #printArea{display:block}
+  #printArea .lb{border-radius:0;aspect-ratio:auto;page-break-inside:avoid;font-size:12pt}
+  #printArea.single .lb{width:100mm;height:150mm;border:0;padding:6mm;page-break-after:always}
+  #printArea.a4{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  #printArea.a4 .lb{height:138mm;margin:2mm;padding:6mm}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>กำไรแม่ค้า</h1>
+    <p class="sub">เครื่องมือฟรีสำหรับคนขายของออนไลน์</p>
+    <nav class="tabs" aria-label="เครื่องมือ">
+      <a href="#profit" data-tab="profit">คำนวณกำไร</a>
+      <a href="#caption" data-tab="caption">แคปชันขายของ</a>
+      <a href="#label" data-tab="label">ใบปะหน้าพัสดุ</a>
+    </nav>
+  </div>
+</header>
+<main>
+<div class="wrap">
+
+<section class="view" id="v-profit">
+  <div class="grid two">
+    <div class="card">
+      <h2>ข้อมูลสินค้า</h2>
+      <div class="fields">
+        <label class="f">แพลตฟอร์ม
+          <select id="platform"></select></label>
+        <label class="f">หมวดสินค้า
+          <select id="category"></select></label>
+      </div>
+      <h3>ราคาและต้นทุน (บาทต่อ 1 ออเดอร์)</h3>
+      <div class="fields">
+        <label class="f">ราคาขาย<input type="number" id="price" min="0" step="1" value="299" inputmode="decimal"></label>
+        <label class="f">ส่วนลดที่ร้านออกเอง<input type="number" id="discount" min="0" step="1" value="0" inputmode="decimal"></label>
+        <label class="f">ต้นทุนสินค้า<input type="number" id="cost" min="0" step="1" value="120" inputmode="decimal"></label>
+        <label class="f">ค่ากล่องและแพ็ก<input type="number" id="pack" min="0" step="1" value="8" inputmode="decimal"></label>
+        <label class="f">ค่าส่งที่ร้านออกเอง<input type="number" id="shipSeller" min="0" step="1" value="0" inputmode="decimal"></label>
+        <label class="f">ค่าส่งที่ลูกค้าจ่าย<input type="number" id="shipBuyer" min="0" step="1" value="35" inputmode="decimal"></label>
+        <label class="f">ค่าโฆษณาเฉลี่ยต่อออเดอร์<input type="number" id="ads" min="0" step="1" value="15" inputmode="decimal"></label>
+      </div>
+      <h3>อัตราค่าธรรมเนียม (แก้ไขได้)</h3>
+      <div class="fields">
+        <label class="f">ค่าคอมมิชชัน %<input type="number" id="rComm" min="0" step="0.01" inputmode="decimal"></label>
+        <label class="f">ค่าธุรกรรม %<input type="number" id="rTrans" min="0" step="0.01" inputmode="decimal"></label>
+        <label class="f">ค่าโปรแกรมเสริม %<input type="number" id="rProg" min="0" step="0.01" inputmode="decimal"></label>
+        <label class="f">เพดานค่าโปรแกรม (บาท, 0 = ไม่มี)<input type="number" id="rCap" min="0" step="1" inputmode="decimal"></label>
+        <label class="f">ค่าคงที่ต่อออเดอร์ (บาท)<input type="number" id="rFixed" min="0" step="0.01" inputmode="decimal"></label>
+      </div>
+      <p class="note" id="presetNote"></p>
+      <p class="note">อัตราตั้งต้นเป็นค่าประมาณรวม VAT แล้ว อ้างอิงบทความสรุปค่าธรรมเนียมปี 2569 ของ FlowAccount แพลตฟอร์มปรับอัตราบ่อย กรุณาตรวจอัตราจริงของร้านคุณใน Seller Center แล้วแก้ตัวเลขให้ตรง</p>
+    </div>
+
+    <div class="card" aria-live="polite">
+      <h2>ผลลัพธ์ต่อ 1 ออเดอร์</h2>
+      <div class="row" style="justify-content:space-between">
+        <div><div class="note" style="margin:0">กำไรสุทธิ</div><div class="big" id="oNet">0</div></div>
+        <span class="pill" id="oPill"></span>
+      </div>
+      <div class="bar" id="oBar" role="img" aria-label="สัดส่วนของราคาขาย"></div>
+      <div class="legend" id="oLegend"></div>
+      <table class="t" id="oTable"></table>
+      <h3>ควรตั้งราคาเท่าไร</h3>
+      <div class="fields">
+        <label class="f">กำไรที่ต้องการ (% ของราคาขาย)<input type="number" id="target" min="0" max="90" step="1" value="20" inputmode="decimal"></label>
+        <label class="f">ยอดขายต่อเดือน (ออเดอร์)<input type="number" id="orders" min="0" step="1" value="100" inputmode="numeric"></label>
+      </div>
+      <div class="kv">
+        <div><span>ราคาเท่าทุน</span><strong id="oBE">-</strong></div>
+        <div><span id="oTargetLb">ราคาที่ได้กำไร 20%</span><strong id="oTP">-</strong></div>
+        <div><span>กำไรต่อเดือน</span><strong id="oMonth">-</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-caption">
+  <div class="grid two">
+    <div class="card">
+      <h2>รายละเอียดสินค้า</h2>
+      <div class="fields">
+        <label class="f">ชื่อสินค้า<input type="text" id="cName" value="กระเป๋าผ้าแคนวาส"></label>
+        <label class="f">ราคาขาย (บาท)<input type="text" id="cPrice" value="199" inputmode="decimal"></label>
+        <label class="f">ราคาปกติ (ถ้ามี)<input type="text" id="cNormal" value="259" inputmode="decimal"></label>
+        <label class="f">ช่องทางสั่งซื้อ<input type="text" id="cChannel" value="ทักแชตหรือกดตะกร้าได้เลย"></label>
+      </div>
+      <label class="f" style="margin-top:12px">จุดเด่นของสินค้า (บรรทัดละ 1 ข้อ)
+        <textarea id="cFeat">ผ้าหนา ทรงอยู่ตัว
+ใส่โน้ตบุ๊ก 14 นิ้วได้
+มีซิปและช่องเล็กด้านใน</textarea></label>
+      <div class="fields" style="margin-top:12px">
+        <label class="f">โปรโมชัน<input type="text" id="cPromo" value="ซื้อ 2 ใบ ส่งฟรี"></label>
+        <label class="f">แฮชแท็กเพิ่มเติม<input type="text" id="cTags" value="กระเป๋าผ้า ของมันต้องมี"></label>
+        <label class="f">คำลงท้าย
+          <select id="cEnd"><option value="ค่ะ">ค่ะ</option><option value="ครับ">ครับ</option><option value="">ไม่ใส่</option></select></label>
+      </div>
+      <div class="row" style="margin-top:14px"><button class="btn" id="cGo" type="button">สร้างแคปชัน</button></div>
+      <p class="note">แคปชันสร้างจากแม่แบบสำเร็จรูป ควรอ่านทวนและปรับถ้อยคำให้ตรงกับสินค้าจริงก่อนโพสต์</p>
+    </div>
+    <div>
+      <div class="card"><h2>แคปชัน 4 แบบ</h2><div id="cOut"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-label">
+  <div class="grid two">
+    <div class="card">
+      <h2>ผู้ส่ง</h2>
+      <label class="f">ชื่อ เบอร์โทร และที่อยู่ผู้ส่ง
+        <textarea id="lFrom" style="min-height:80px">ร้านตัวอย่าง 081-234-5678
+99/9 ถ.สุขุมวิท แขวงบางนา เขตบางนา กรุงเทพฯ 10260</textarea></label>
+      <h2 style="margin-top:16px">ผู้รับ</h2>
+      <label class="f">วางที่อยู่ลูกค้าได้หลายราย เว้น 1 บรรทัดว่างระหว่างแต่ละราย บรรทัดแรกคือชื่อ ถ้าเก็บเงินปลายทางให้เพิ่มบรรทัด COD ตามด้วยยอดเงิน
+        <textarea id="lTo" style="min-height:200px">คุณสมหญิง ใจดี
+089-111-2222
+12/3 หมู่ 4 ต.บ้านใหม่ อ.เมือง จ.เชียงใหม่ 50000
+
+คุณวิชัย รักเรียน
+062-333-4444
+55 ซ.ลาดพร้าว 71 แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพฯ 10230
+COD 350</textarea></label>
+      <div class="fields" style="margin-top:12px">
+        <label class="f">ขนาดกระดาษ
+          <select id="lSize"><option value="single">สติกเกอร์ 100 × 150 มม. (1 ใบต่อแผ่น)</option><option value="a4">A4 (4 ใบต่อแผ่น)</option></select></label>
+      </div>
+      <div class="row" style="margin-top:14px"><button class="btn" id="lPrint" type="button">พิมพ์ใบปะหน้า</button></div>
+      <p class="note">ข้อมูลที่อยู่ทั้งหมดอยู่ในเครื่องของคุณเท่านั้น ไม่ถูกส่งไปที่ใด</p>
+    </div>
+    <div class="card">
+      <h2>ตัวอย่าง <span id="lCount" class="note"></span></h2>
+      <div class="labels" id="lOut"></div>
+    </div>
+  </div>
+</section>
+
+</div>
+</main>
+<div id="printArea"></div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num = id => { const v = parseFloat($(id).value); return isFinite(v) && v > 0 ? v : 0; };
+const baht = n => n.toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2});
+const store = { get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} } };
+
+/* ---------- tabs ---------- */
+const TABS = ['profit','caption','label'];
+function showTab(){
+  const t = TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'profit';
+  TABS.forEach(n => $('v-'+n).classList.toggle('on', n === t));
+  document.querySelectorAll('nav.tabs a').forEach(a => a.dataset.tab === t ? a.setAttribute('aria-current','page') : a.removeAttribute('aria-current'));
+}
+addEventListener('hashchange', showTab);
+
+/* ---------- profit ---------- */
+// category row: [label, commission %, program %]
+const PRESETS = {
+  shopee:{name:'Shopee', trans:3.21, fixed:1.07, cap:0,
+    cats:[['แฟชั่น เสื้อผ้า',17.12,0],['อาหาร ของใช้ในบ้าน',16.05,0],['เครื่องใช้ไฟฟ้าขนาดใหญ่',11.24,0],['มือถือ แท็บเล็ต โน้ตบุ๊ก',7.49,0]],
+    note:'Shopee: ร้านที่เข้าโปรแกรมส่งฟรีหรือโปรแกรมส่วนลด มีค่าบริการเพิ่มราว 5.35–8.56% ให้ใส่ในช่องค่าโปรแกรมเสริม'},
+  tiktok:{name:'TikTok Shop', trans:3.21, fixed:0, cap:199,
+    cats:[['สินค้าทั่วไป',6.42,6.42],['อิเล็กทรอนิกส์',5.35,5.35]],
+    note:'TikTok Shop: ค่าโปรแกรมเสริมคือ Growth Fee เก็บไม่เกิน 199 บาทต่อชิ้น ร้านที่ขายเกิน 100 ชิ้นใน 30 วันมีค่าคงที่ 1.07 บาทต่อออเดอร์'},
+  lazada:{name:'Lazada', trans:3.21, fixed:0, cap:0,
+    cats:[['แฟชั่น',17.12,0],['สุขภาพ ความงาม ของใช้ อาหาร',16.05,0],['มือถือ แท็บเล็ต ทีวี',6.96,0]],
+    note:'Lazada: แพ็กเกจเสริมเป็นทางเลือก ถ้าร้านสมัครไว้ให้ใส่อัตราในช่องค่าโปรแกรมเสริม'},
+  custom:{name:'กำหนดเอง / ขายช่องทางอื่น', trans:0, fixed:0, cap:0, cats:[['ไม่มีค่าธรรมเนียม',0,0]],
+    note:'ใส่อัตราค่าธรรมเนียมของช่องทางที่คุณขายได้เอง'}
+};
+function fillPlatforms(){
+  $('platform').innerHTML = Object.entries(PRESETS).map(([k,p]) => `<option value="${k}">${esc(p.name)}</option>`).join('');
+}
+function fillCats(){
+  const p = PRESETS[$('platform').value];
+  $('category').innerHTML = p.cats.map((c,i) => `<option value="${i}">${esc(c[0])}</option>`).join('');
+  applyPreset();
+}
+function applyPreset(){
+  const p = PRESETS[$('platform').value], c = p.cats[+$('category').value || 0];
+  $('rComm').value = c[1]; $('rProg').value = c[2]; $('rTrans').value = p.trans; $('rCap').value = p.cap; $('rFixed').value = p.fixed;
+  $('presetNote').textContent = p.note;
+  calc();
+}
+function inputs(){
+  return { price:num('price'), discount:num('discount'), cost:num('cost'), pack:num('pack'), shipSeller:num('shipSeller'),
+    shipBuyer:num('shipBuyer'), ads:num('ads'), comm:num('rComm'), trans:num('rTrans'), prog:num('rProg'), cap:num('rCap'), fixed:num('rFixed') };
+}
+function breakdown(v, price){
+  const base = Math.max(0, price - v.discount);
+  const comm = base * v.comm / 100;
+  let prog = base * v.prog / 100; if (v.cap > 0) prog = Math.min(prog, v.cap);
+  const trans = (base + v.shipBuyer) * v.trans / 100;
+  const fees = comm + prog + trans + v.fixed;
+  const net = base - fees - v.cost - v.pack - v.shipSeller - v.ads;
+  return { base, comm, prog, trans, fixed:v.fixed, fees, net, margin: base > 0 ? net / base * 100 : 0 };
+}
+// lowest price whose net profit reaches m% of the price paid; null when no price can reach it
+function priceFor(v, m){
+  const f = p => { const b = breakdown(v, p); return b.net - m / 100 * b.base; };
+  let lo = v.discount, hi = 1e7;
+  if (f(hi) < 0) return null;
+  for (let i = 0; i < 60; i++){ const mid = (lo + hi) / 2; f(mid) >= 0 ? hi = mid : lo = mid; }
+  return hi;
+}
+function calc(){
+  const v = inputs(), b = breakdown(v, v.price);
+  $('oNet').textContent = baht(b.net) + ' ฿';
+  $('oNet').style.color = b.net < 0 ? 'var(--bad)' : 'var(--ink)';
+  const pill = $('oPill');
+  pill.className = 'pill ' + (b.net < 0 ? 'bad' : b.margin < 15 ? 'warn' : 'good');
+  pill.textContent = b.net < 0 ? 'ขาดทุน' : 'กำไร ' + b.margin.toFixed(1) + '%';
+  const parts = [['ต้นทุนสินค้า', v.cost, '#10302b'], ['ค่าธรรมเนียม', b.fees, '#b3261e'], ['แพ็กและค่าส่ง', v.pack + v.shipSeller, '#6b8f88'], ['โฆษณา', v.ads, '#f2a31b'], ['กำไร', Math.max(0, b.net), '#16794c']];
+  const total = parts.reduce((s,p) => s + p[1], 0) || 1;
+  $('oBar').innerHTML = parts.map(p => `<i style="width:${p[1]/total*100}%;background:${p[2]}"></i>`).join('');
+  $('oLegend').innerHTML = parts.map(p => `<span><b style="background:${p[2]}"></b>${p[0]} ${(p[1]/total*100).toFixed(0)}%</span>`).join('');
+  const rows = [['ราคาหลังหักส่วนลดร้าน', b.base], ['ค่าคอมมิชชัน', -b.comm], ['ค่าโปรแกรมเสริม', -b.prog], ['ค่าธุรกรรม', -b.trans], ['ค่าคงที่ต่อออเดอร์', -b.fixed],
+    ['ต้นทุนสินค้า', -v.cost], ['ค่ากล่องและแพ็ก', -v.pack], ['ค่าส่งที่ร้านออก', -v.shipSeller], ['ค่าโฆษณา', -v.ads]];
+  $('oTable').innerHTML = rows.filter((r,i) => i === 0 || r[1] !== 0).map(r => `<tr><td>${r[0]}</td><td>${baht(r[1])}</td></tr>`).join('')
+    + `<tr class="sum"><td>กำไรสุทธิ</td><td>${baht(b.net)}</td></tr>`;
+  const t = num('target'), be = priceFor(v, 0), tp = priceFor(v, t);
+  $('oBE').textContent = be == null ? 'ทำไม่ได้' : baht(Math.ceil(be)) + ' ฿';
+  $('oTargetLb').textContent = 'ราคาที่ได้กำไร ' + t + '%';
+  $('oTP').textContent = tp == null ? 'ทำไม่ได้' : baht(Math.ceil(tp)) + ' ฿';
+  $('oMonth').textContent = baht(b.net * num('orders')) + ' ฿';
+}
+
+/* ---------- caption ---------- */
+function captions(){
+  const name = $('cName').value.trim() || 'สินค้า', price = $('cPrice').value.trim(), normal = $('cNormal').value.trim();
+  const feats = $('cFeat').value.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 5);
+  const promo = $('cPromo').value.trim(), ch = $('cChannel').value.trim(), e = $('cEnd').value;
+  const tags = [name, ...$('cTags').value.split(/[\s,#]+/)].map(s => s.replace(/\s+/g, '')).filter(Boolean).map(s => '#' + s).join(' ');
+  const priceLine = price ? `ราคา ${price} บาท` + (normal ? ` (ปกติ ${normal} บาท)` : '') : '';
+  const L = arr => arr.filter(Boolean).join('\n');
+  const f0 = feats[0] || 'คุณภาพดี';
+  return [
+    ['กระชับ ตรงประเด็น', L([name, feats.map(f => '• ' + f).join('\n'), '', priceLine, promo, ch && 'สั่งซื้อ: ' + ch, '', tags])],
+    ['ชวนคุย เป็นกันเอง', L([`ใครกำลังมองหา${name}อยู่ ลองดูตัวนี้ก่อน${e}`, '', feats.length ? 'ที่ลูกค้าชอบคือ ' + feats.join(' / ') : '', priceLine && priceLine + ' เท่านั้น' + e, promo && 'ตอนนี้มีโปร ' + promo, ch, '', tags])],
+    ['เร่งตัดสินใจ', L([`${name} ล็อตนี้มีจำนวนจำกัด${e}`, promo && promo + ' เฉพาะช่วงนี้', priceLine, '', feats.map((f,i) => `${i+1}. ${f}`).join('\n'), '', ch && ch + ' ก่อนของหมด' + e, '', tags])],
+    ['ถาม-ตอบ', L([`ถาม: ${name}ตัวนี้ดีอย่างไร`, `ตอบ: ${f0}${feats[1] ? ' และ' + feats[1] : ''}${e}`, feats[2] && `ถาม: มีอะไรอีกไหม\nตอบ: ${feats.slice(2).join(' ')}${e}`, price && `ถาม: ราคาเท่าไร\nตอบ: ${price} บาท${normal ? ' จากปกติ ' + normal + ' บาท' : ''}${promo ? ' ' + promo : ''}${e}`, '', ch, '', tags])]
+  ];
+}
+function renderCaptions(){
+  $('cOut').innerHTML = captions().map((c,i) => `<div class="cap"><pre id="cap${i}">${esc(c[1])}</pre><div class="row"><small>${c[0]} · ${c[1].length} ตัวอักษร</small><button class="btn small ghost" type="button" data-copy="cap${i}">คัดลอก</button></div></div>`).join('');
+}
+document.addEventListener('click', ev => {
+  const b = ev.target.closest('[data-copy]'); if (!b) return;
+  const text = $(b.dataset.copy).textContent;
+  const done = ok => { b.textContent = ok ? 'คัดลอกแล้ว' : 'คัดลอกไม่ได้ กรุณาเลือกข้อความเอง'; setTimeout(() => b.textContent = 'คัดลอก', 1800); };
+  try { navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); } catch(e){ done(false); }
+});
+
+/* ---------- labels ---------- */
+function parseRecipients(){
+  return $('lTo').value.split(/\n\s*\n/).map(b => b.split('\n').map(s => s.trim()).filter(Boolean)).filter(l => l.length).map(lines => {
+    const r = { name: lines[0], tel:'', cod:'', addr:[] };
+    lines.slice(1).forEach(s => {
+      const cod = s.match(/^COD\s*:?\s*(.+)$/i);
+      if (cod) r.cod = cod[1];
+      else if (!r.tel && /^[+\d][\d\s\-]{7,}$/.test(s)) r.tel = s;
+      else r.addr.push(s);
+    });
+    return r;
+  });
+}
+function labelHTML(r, from){
+  return `<div class="lb"><div class="from"><span class="tag">ผู้ส่ง</span><br>${esc(from).replace(/\n/g,'<br>')}</div>
+  <div class="to"><span class="tag">ผู้รับ</span><b>${esc(r.name)}</b>${r.tel ? `<span class="tel">โทร ${esc(r.tel)}</span><br>` : ''}${r.addr.map(esc).join('<br>')}</div>
+  ${r.cod ? `<div class="cod">เก็บเงินปลายทาง ${esc(r.cod)} บาท</div>` : ''}</div>`;
+}
+function renderLabels(){
+  const list = parseRecipients(), from = $('lFrom').value.trim();
+  const html = list.map(r => labelHTML(r, from)).join('');
+  $('lOut').innerHTML = html || '<p class="note">ยังไม่มีที่อยู่ผู้รับ</p>';
+  $('lCount').textContent = list.length ? list.length + ' ใบ' : '';
+  const pa = $('printArea'); pa.className = $('lSize').value; pa.innerHTML = html;
+  let st = $('pageStyle'); if (!st){ st = document.createElement('style'); st.id = 'pageStyle'; document.head.appendChild(st); }
+  st.textContent = $('lSize').value === 'single' ? '@page{size:100mm 150mm;margin:0}' : '@page{size:A4;margin:6mm}';
+  store.set('km_from', $('lFrom').value);
+}
+
+/* ---------- init ---------- */
+fillPlatforms(); fillCats();
+$('platform').addEventListener('change', fillCats);
+$('category').addEventListener('change', applyPreset);
+$('v-profit').addEventListener('input', ev => { if (ev.target.tagName === 'INPUT') calc(); });
+$('cGo').addEventListener('click', renderCaptions);
+$('v-label').addEventListener('input', renderLabels);
+$('lPrint').addEventListener('click', () => { renderLabels(); window.print(); });
+const savedFrom = store.get('km_from'); if (savedFrom) $('lFrom').value = savedFrom;
+showTab(); renderCaptions(); renderLabels();
+</script>
+</body>
+</html>
