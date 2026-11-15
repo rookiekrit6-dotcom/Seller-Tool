@@ -77,24 +77,50 @@ table.t tr.sum td{font-weight:700;border-bottom:0}
 #printArea{display:none}
 @media print{
   body{background:#fff}
-  header.top,main{display:none}
+  header.top,main,footer.ft{display:none}
   #printArea{display:block}
   #printArea .lb{border-radius:0;aspect-ratio:auto;page-break-inside:avoid;font-size:12pt}
   #printArea.single .lb{width:100mm;height:150mm;border:0;padding:6mm;page-break-after:always}
   #printArea.a4{display:grid;grid-template-columns:1fr 1fr;gap:0}
   #printArea.a4 .lb{height:138mm;margin:2mm;padding:6mm}
 }
+
+/* identity: packing table — kraft paper dotted like a cutting mat, tape stripe, stamped logo */
+:root{--paper:#efe8d9}
+body{background-color:#efe8d9;background-image:radial-gradient(circle at 1px 1px,rgba(16,48,43,.16) 1px,transparent 1.6px);background-size:22px 22px}
+header.top{background:linear-gradient(135deg,#0f7564 0%,#0a4f44 100%);position:relative;padding-top:26px}
+header.top::before{content:"";position:absolute;left:0;right:0;top:0;height:9px;background:repeating-linear-gradient(-45deg,#f2a31b 0 14px,#10302b 14px 28px)}
+h1{display:flex;align-items:center;gap:10px}
+h1 svg{width:38px;height:38px;flex:none}
+.card{box-shadow:0 1px 0 rgba(16,48,43,.06),0 10px 22px -16px rgba(16,48,43,.45)}
+.card h2{padding-bottom:8px;border-bottom:2px dashed var(--line)}
+.kv div{background:#f6f1e6}
+footer.ft{max-width:1040px;margin:0 auto;padding:0 16px 40px;color:var(--ink-soft);font-size:.85rem}
+
+/* icons and tactile buttons */
+.ic{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav.tabs a{display:inline-flex;align-items:center;gap:7px}
+.btn,.types button{display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s,box-shadow .08s,filter .15s}
+.btn{box-shadow:0 3px 0 rgba(0,0,0,.28)}
+.btn.alt,.btn.ghost,.btn.danger{box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:translateY(3px);box-shadow:0 0 0 rgba(0,0,0,0)}
+.types button{box-shadow:0 3px 0 rgba(27,36,64,.14);flex-direction:column;gap:4px;padding:12px 8px}
+.types button .ic{width:1.5em;height:1.5em}
+.types button:active{transform:translateY(3px);box-shadow:none}
+@media (prefers-reduced-motion:reduce){.btn,.types button{transition:none}}
+@media print{.btn{box-shadow:none}}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="wrap">
-    <h1>กำไรแม่ค้า</h1>
+    <h1><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 13l15-8 15 8v15l-15 8-15-8z" fill="#f2a31b"/><path d="M5 13l15 8 15-8M20 21v15" fill="none" stroke="#10302b" stroke-width="2.2" stroke-linejoin="round"/><path d="M12.5 9l15 8v6" fill="none" stroke="#fff" stroke-width="2.2"/></svg>กำไรแม่ค้า</h1>
     <p class="sub">เครื่องมือฟรีสำหรับคนขายของออนไลน์</p>
     <nav class="tabs" aria-label="เครื่องมือ">
-      <a href="#profit" data-tab="profit">คำนวณกำไร</a>
-      <a href="#caption" data-tab="caption">แคปชันขายของ</a>
-      <a href="#label" data-tab="label">ใบปะหน้าพัสดุ</a>
+      <a href="#profit" data-tab="profit"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>คำนวณกำไร</a>
+      <a href="#caption" data-tab="caption"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>แคปชันขายของ</a>
+      <a href="#label" data-tab="label"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg>ใบปะหน้าพัสดุ</a>
     </nav>
   </div>
 </header>
@@ -176,7 +202,7 @@ table.t tr.sum td{font-weight:700;border-bottom:0}
         <label class="f">คำลงท้าย
           <select id="cEnd"><option value="ค่ะ">ค่ะ</option><option value="ครับ">ครับ</option><option value="">ไม่ใส่</option></select></label>
       </div>
-      <div class="row" style="margin-top:14px"><button class="btn" id="cGo" type="button">สร้างแคปชัน</button></div>
+      <div class="row" style="margin-top:14px"><button class="btn" id="cGo" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z"/></svg>สร้างแคปชัน</button></div>
       <p class="note">แคปชันสร้างจากแม่แบบสำเร็จรูป ควรอ่านทวนและปรับถ้อยคำให้ตรงกับสินค้าจริงก่อนโพสต์</p>
     </div>
     <div>
@@ -206,7 +232,7 @@ COD 350</textarea></label>
         <label class="f">ขนาดกระดาษ
           <select id="lSize"><option value="single">สติกเกอร์ 100 × 150 มม. (1 ใบต่อแผ่น)</option><option value="a4">A4 (4 ใบต่อแผ่น)</option></select></label>
       </div>
-      <div class="row" style="margin-top:14px"><button class="btn" id="lPrint" type="button">พิมพ์ใบปะหน้า</button></div>
+      <div class="row" style="margin-top:14px"><button class="btn" id="lPrint" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><rect x="7" y="14" width="10" height="7"/></svg>พิมพ์ใบปะหน้า</button></div>
       <p class="note">ข้อมูลที่อยู่ทั้งหมดอยู่ในเครื่องของคุณเท่านั้น ไม่ถูกส่งไปที่ใด</p>
     </div>
     <div class="card">
@@ -218,6 +244,7 @@ COD 350</textarea></label>
 
 </div>
 </main>
+<footer class="ft">กำไรแม่ค้า เครื่องมือฟรีสำหรับคนขายของออนไลน์ ตัวเลขทั้งหมดเป็นการประมาณเพื่อช่วยตัดสินใจ</footer>
 <div id="printArea"></div>
 
 <script>
