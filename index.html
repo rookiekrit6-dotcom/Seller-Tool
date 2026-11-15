@@ -115,6 +115,18 @@ nav.tabs a{display:inline-flex;align-items:center;gap:7px}
 nav.tabs{scrollbar-width:none;-ms-overflow-style:none}
 nav.tabs::-webkit-scrollbar{display:none}
 @media(max-width:520px){nav.tabs a{padding:9px 10px;font-size:.92rem;gap:5px}nav.tabs{margin:0 -8px}}
+
+/* platform comparison */
+.cmp{display:grid;gap:10px;margin-top:14px}
+.cmp-row{display:grid;grid-template-columns:170px 1fr auto auto;gap:14px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.cmp-row.best{border-color:var(--good);box-shadow:inset 5px 0 0 var(--good)}
+.cmp-name small{display:block;color:var(--ink-soft);font-size:.8rem}
+.cmp-bar{height:14px;background:var(--line);border-radius:7px;overflow:hidden}
+.cmp-bar i{display:block;height:100%;border-radius:7px}
+.cmp-num{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.cmp-num span{display:block;font-size:.78rem;color:var(--ink-soft);font-family:var(--f-body)}
+.cmp-num strong{font-size:1.15rem}
+@media(max-width:700px){.cmp-row{grid-template-columns:1fr auto}.cmp-bar{grid-column:1/-1;order:3}.cmp-row .pill{grid-column:1/-1;order:4;justify-self:start}}
 </style>
 </head>
 <body>
@@ -184,6 +196,13 @@ nav.tabs::-webkit-scrollbar{display:none}
         <div><span>กำไรต่อเดือน</span><strong id="oMonth">-</strong></div>
       </div>
     </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h2>ขายที่ไหนเหลือกำไรมากกว่า</h2>
+    <div class="fields"><label class="f">กลุ่มสินค้า
+      <select id="cmpCat"><option value="fashion">แฟชั่น เสื้อผ้า</option><option value="home">ของใช้ อาหาร ความงาม</option><option value="phone">มือถือ อิเล็กทรอนิกส์</option></select></label></div>
+    <div class="cmp" id="cmpOut" aria-live="polite"></div>
+    <p class="note">ใช้ราคาและต้นทุนชุดเดียวกับที่กรอกด้านบน คิดด้วยอัตราตั้งต้นโดยประมาณของแต่ละแพลตฟอร์ม ยังไม่รวมค่าโปรแกรมเสริมที่ร้านสมัครเอง อัตราจริงของร้านคุณอาจต่างจากนี้</p>
   </div>
 </section>
 
@@ -339,6 +358,20 @@ function calc(){
   $('oTargetLb').textContent = 'ราคาที่ได้กำไร ' + t + '%';
   $('oTP').textContent = tp == null ? 'ทำไม่ได้' : baht(Math.ceil(tp)) + ' ฿';
   $('oMonth').textContent = baht(b.net * num('orders')) + ' ฿';
+  renderCompare(v);
+}
+// same costs, each platform's default rates for the chosen product group
+const CMP = { fashion:{shopee:0,tiktok:0,lazada:0}, home:{shopee:1,tiktok:0,lazada:1}, phone:{shopee:3,tiktok:1,lazada:2} };
+function renderCompare(v){
+  const g = CMP[$('cmpCat').value];
+  const rows = ['shopee','tiktok','lazada'].map(k => { const pr = PRESETS[k], c = pr.cats[g[k]];
+    return { name:pr.name, cat:c[0], b: breakdown(Object.assign({}, v, {comm:c[1], prog:c[2], trans:pr.trans, cap:pr.cap, fixed:pr.fixed}), v.price) }; });
+  const best = Math.max(...rows.map(r => r.b.net)), span = Math.max(1, ...rows.map(r => Math.abs(r.b.net)));
+  $('cmpOut').innerHTML = rows.map(r => { const top = r.b.net === best;
+    return `<div class="cmp-row${top ? ' best' : ''}"><div class="cmp-name"><b>${esc(r.name)}</b><small>${esc(r.cat)}</small></div>
+      <div class="cmp-bar"><i style="width:${Math.max(2, Math.abs(r.b.net) / span * 100)}%;background:${r.b.net < 0 ? 'var(--bad)' : 'var(--good)'}"></i></div>
+      <div class="cmp-num"><span>ค่าธรรมเนียม ${baht(r.b.fees)}</span><strong>${baht(r.b.net)} ฿</strong></div>
+      ${top ? `<span class="pill ${r.b.net < 0 ? 'bad' : 'good'}">${r.b.net < 0 ? 'ขาดทุนน้อยที่สุด' : 'กำไรมากที่สุด'}</span>` : `<span class="pill warn">น้อยกว่า ${baht(best - r.b.net)} ฿</span>`}</div>`; }).join('');
 }
 
 /* ---------- caption ---------- */
@@ -400,6 +433,7 @@ function renderLabels(){
 fillPlatforms(); fillCats();
 $('platform').addEventListener('change', fillCats);
 $('category').addEventListener('change', applyPreset);
+$('cmpCat').addEventListener('change', calc);
 $('v-profit').addEventListener('input', ev => { if (ev.target.tagName === 'INPUT') calc(); });
 $('cGo').addEventListener('click', renderCaptions);
 $('v-label').addEventListener('input', renderLabels);
