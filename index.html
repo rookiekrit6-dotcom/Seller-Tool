@@ -145,6 +145,12 @@ dialog.dlg::backdrop{background:rgba(10,20,18,.5)}
 .dlg .dlg-b li{margin-bottom:4px}
 .dlg .dlg-b small{color:var(--ink-soft)}
 @media print{.site-ft,dialog.dlg{display:none !important}}
+
+/* glossary */
+.gloss details{border-bottom:1px solid var(--line);padding:10px 0}
+.gloss details:last-child{border-bottom:0}
+.gloss summary{font-weight:600;cursor:pointer}
+.gloss p{margin:6px 0 0;color:var(--ink-soft);font-size:.95rem}
 </style>
 </head>
 <body>
@@ -228,6 +234,16 @@ dialog.dlg::backdrop{background:rgba(10,20,18,.5)}
     <div class="kv" id="promoOut" aria-live="polite"></div>
     <p class="note">ส่วนลดคิดเป็นส่วนลดที่ร้านออกเองทั้งหมด งบโฆษณาสูงสุดคือค่าโฆษณาต่อออเดอร์ที่ทำให้กำไรเหลือ 0 พอดีที่ราคาขายปกติ</p>
   </div>
+  <div class="card gloss" style="margin-top:16px">
+    <h2>คำที่ควรรู้ก่อนตั้งราคา</h2>
+    <details><summary>ค่าคอมมิชชัน</summary><p>ส่วนแบ่งที่แพลตฟอร์มหักจากราคาสินค้าทุกครั้งที่ขายได้ อัตราต่างกันตามหมวดสินค้าและประเภทร้าน</p></details>
+    <details><summary>ค่าธุรกรรม</summary><p>ค่าบริการรับชำระเงิน คิดเป็นเปอร์เซ็นต์จากยอดที่ลูกค้าจ่าย ซึ่งมักรวมค่าส่งด้วย</p></details>
+    <details><summary>ค่าโปรแกรมเสริม</summary><p>ค่าบริการเพิ่มเมื่อร้านเข้าร่วมโปรแกรมของแพลตฟอร์ม เช่น โปรแกรมส่งฟรีหรือโปรแกรมส่วนลด ร้านที่ไม่ได้สมัครไม่ต้องจ่าย</p></details>
+    <details><summary>ค่าคงที่ต่อออเดอร์</summary><p>จำนวนเงินที่หักเท่ากันทุกออเดอร์ ไม่ว่าสินค้าราคาเท่าไร จึงกระทบสินค้าราคาถูกมากกว่าสินค้าราคาแพง</p></details>
+    <details><summary>ส่วนลดที่ร้านออกเอง</summary><p>ส่วนลดหรือโค้ดที่ร้านเป็นผู้รับภาระ ต่างจากส่วนลดที่แพลตฟอร์มออกให้ ซึ่งร้านยังได้เงินเต็ม</p></details>
+    <details><summary>ราคาเท่าทุน</summary><p>ราคาขายต่ำสุดที่หักต้นทุนและค่าธรรมเนียมทั้งหมดแล้วเหลือ 0 พอดี ตั้งต่ำกว่านี้คือขาดทุนทุกออเดอร์</p></details>
+    <details><summary>อัตรากำไร</summary><p>กำไรสุทธิเทียบกับราคาที่ขายได้ เช่น ขาย 200 บาท เหลือกำไร 40 บาท อัตรากำไรคือ 20%</p></details>
+  </div>
 </section>
 
 <section class="view" id="v-caption">
@@ -254,7 +270,7 @@ dialog.dlg::backdrop{background:rgba(10,20,18,.5)}
       <p class="note">แคปชันสร้างจากแม่แบบสำเร็จรูป ควรอ่านทวนและปรับถ้อยคำให้ตรงกับสินค้าจริงก่อนโพสต์</p>
     </div>
     <div>
-      <div class="card"><h2>แคปชัน 4 แบบ</h2><div id="cOut"></div></div>
+      <div class="card"><h2>แคปชัน 8 แบบ</h2><div id="cOut"></div></div>
     </div>
   </div>
 </section>
@@ -294,7 +310,7 @@ COD 350</textarea></label>
 </main>
 <footer class="site-ft"><button type="button" data-open="dlgGuide">วิธีใช้</button><button type="button" data-open="dlgPolicy">นโยบายความเป็นส่วนตัวและความปลอดภัย</button><a href="https://github.com/rookiekrit6-dotcom/Seller-Tool/issues">แจ้งปัญหาหรือเสนอแนะ</a><span>ใช้ฟรี ไม่ต้องสมัครสมาชิก</span></footer>
 <dialog class="dlg" id="dlgGuide" aria-labelledby="dlgGuideT"><div class="dlg-h"><b id="dlgGuideT">วิธีใช้ กำไรแม่ค้า</b><button class="dlg-x" type="button" data-close>ปิด</button></div><div class="dlg-b"><h3>คำนวณกำไร</h3><ol><li>เลือกแพลตฟอร์มและหมวดสินค้า ระบบจะใส่อัตราค่าธรรมเนียมตั้งต้นให้</li><li>กรอกราคาขาย ต้นทุนสินค้า ค่าแพ็ก ค่าส่ง และค่าโฆษณาต่อออเดอร์</li><li>เปิด Seller Center ของร้านคุณ แล้วแก้อัตราค่าธรรมเนียมในเว็บให้ตรงกับของจริง</li><li>ดูกำไรสุทธิ ราคาเท่าทุน และราคาที่ควรตั้งเพื่อให้ได้กำไรตามเป้า</li><li>เลื่อนลงไปดูตารางเทียบว่าขายที่แพลตฟอร์มไหนเหลือกำไรมากกว่า</li></ol>
-<h3>แคปชันขายของ</h3><ol><li>กรอกชื่อสินค้า ราคา จุดเด่นบรรทัดละ 1 ข้อ และโปรโมชัน</li><li>กดสร้างแคปชัน จะได้ 4 แบบให้เลือก</li><li>กดคัดลอกแบบที่ชอบ แล้วอ่านทวนและปรับถ้อยคำให้ตรงกับสินค้าจริงก่อนโพสต์</li></ol>
+<h3>แคปชันขายของ</h3><ol><li>กรอกชื่อสินค้า ราคา จุดเด่นบรรทัดละ 1 ข้อ และโปรโมชัน</li><li>กดสร้างแคปชัน จะได้ 8 แบบให้เลือก</li><li>กดคัดลอกแบบที่ชอบ แล้วอ่านทวนและปรับถ้อยคำให้ตรงกับสินค้าจริงก่อนโพสต์</li></ol>
 <h3>ใบปะหน้าพัสดุ</h3><ol><li>กรอกชื่อและที่อยู่ผู้ส่ง ระบบจะจำไว้ในเครื่องนี้</li><li>วางที่อยู่ลูกค้า เว้น 1 บรรทัดว่างระหว่างแต่ละราย บรรทัดแรกคือชื่อผู้รับ</li><li>ถ้าเก็บเงินปลายทาง เพิ่มบรรทัด COD ตามด้วยยอดเงิน</li><li>เลือกขนาดกระดาษ แล้วกดพิมพ์ใบปะหน้า</li></ol></div></dialog>
 <dialog class="dlg" id="dlgPolicy" aria-labelledby="dlgPolicyT"><div class="dlg-h"><b id="dlgPolicyT">นโยบายความเป็นส่วนตัวและความปลอดภัยของข้อมูล</b><button class="dlg-x" type="button" data-close>ปิด</button></div><div class="dlg-b">
 <p><small>ปรับปรุงล่าสุด 15 พฤศจิกายน 2569</small></p>
@@ -433,13 +449,17 @@ function captions(){
   const promo = $('cPromo').value.trim(), ch = $('cChannel').value.trim(), e = $('cEnd').value;
   const tags = [name, ...$('cTags').value.split(/[\s,#]+/)].map(s => s.replace(/\s+/g, '')).filter(Boolean).map(s => '#' + s).join(' ');
   const priceLine = price ? `ราคา ${price} บาท` + (normal ? ` (ปกติ ${normal} บาท)` : '') : '';
-  const L = arr => arr.filter(Boolean).join('\n');
+  const L = arr => arr.filter(Boolean).join('\n'), q = e === 'ค่ะ' ? 'คะ' : e;
   const f0 = feats[0] || 'คุณภาพดี';
   return [
     ['กระชับ ตรงประเด็น', L([name, feats.map(f => '• ' + f).join('\n'), '', priceLine, promo, ch && 'สั่งซื้อ: ' + ch, '', tags])],
     ['ชวนคุย เป็นกันเอง', L([`ใครกำลังมองหา${name}อยู่ ลองดูตัวนี้ก่อน${e}`, '', feats.length ? 'ที่ลูกค้าชอบคือ ' + feats.join(' / ') : '', priceLine && priceLine + ' เท่านั้น' + e, promo && 'ตอนนี้มีโปร ' + promo, ch, '', tags])],
     ['เร่งตัดสินใจ', L([`${name} ล็อตนี้มีจำนวนจำกัด${e}`, promo && promo + ' เฉพาะช่วงนี้', priceLine, '', feats.map((f,i) => `${i+1}. ${f}`).join('\n'), '', ch && ch + ' ก่อนของหมด' + e, '', tags])],
-    ['ถาม-ตอบ', L([`ถาม: ${name}ตัวนี้ดีอย่างไร`, `ตอบ: ${f0}${feats[1] ? ' และ' + feats[1] : ''}${e}`, feats[2] && `ถาม: มีอะไรอีกไหม\nตอบ: ${feats.slice(2).join(' ')}${e}`, price && `ถาม: ราคาเท่าไร\nตอบ: ${price} บาท${normal ? ' จากปกติ ' + normal + ' บาท' : ''}${promo ? ' ' + promo : ''}${e}`, '', ch, '', tags])]
+    ['ถาม-ตอบ', L([`ถาม: ${name}ตัวนี้ดีอย่างไร`, `ตอบ: ${f0}${feats[1] ? ' และ' + feats[1] : ''}${e}`, feats[2] && `ถาม: มีอะไรอีกไหม\nตอบ: ${feats.slice(2).join(' ')}${e}`, price && `ถาม: ราคาเท่าไร\nตอบ: ${price} บาท${normal ? ' จากปกติ ' + normal + ' บาท' : ''}${promo ? ' ' + promo : ''}${e}`, '', ch, '', tags])],
+    ['สั้น สำหรับคลิปและสตอรี่', L([name, [f0, feats[1]].filter(Boolean).join(' + '), price && price + ' บาท' + (promo ? ' · ' + promo : ''), ch, tags])],
+    ['ของเข้าใหม่', L([`ของเข้าแล้ว${e} ${name}`, '', feats.map(f => '- ' + f).join('\n'), '', priceLine, promo, ch && 'สนใจ ' + ch, '', tags])],
+    ['ซื้อเป็นของขวัญ', L([`กำลังหาของขวัญให้คนสำคัญอยู่ไหม${q}`, `ลองดู${name}`, '', feats.length ? 'จุดเด่น: ' + feats.join(', ') : '', priceLine, promo, ch, '', tags])],
+    ['ตอบข้อลังเล', L([`ยังลังเลเรื่อง${name}อยู่ใช่ไหม${q}`, '', feats.map(f => '- ' + f).join('\n'), '', priceLine, promo && 'โปรตอนนี้: ' + promo, 'สอบถามรายละเอียดก่อนตัดสินใจได้' + e, ch, '', tags])]
   ];
 }
 function renderCaptions(){
