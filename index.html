@@ -151,6 +151,13 @@ dialog.dlg::backdrop{background:rgba(10,20,18,.5)}
 .gloss details:last-child{border-bottom:0}
 .gloss summary{font-weight:600;cursor:pointer}
 .gloss p{margin:6px 0 0;color:var(--ink-soft);font-size:.95rem}
+
+/* saved products */
+.it-wrap{overflow-x:auto;margin-top:12px}
+table.it th{text-align:right;font-size:.82rem;font-weight:600;color:var(--ink-soft);padding:6px 10px 6px 0;white-space:nowrap}
+table.it th:first-child,table.it td:first-child{text-align:left}
+table.it td{padding:8px 10px 8px 0;text-align:right;font-family:var(--f-num);white-space:nowrap}
+table.it td:first-child{font-family:var(--f-body);white-space:normal;min-width:120px}
 </style>
 </head>
 <body>
@@ -234,6 +241,13 @@ dialog.dlg::backdrop{background:rgba(10,20,18,.5)}
     <div class="kv" id="promoOut" aria-live="polite"></div>
     <p class="note">ส่วนลดคิดเป็นส่วนลดที่ร้านออกเองทั้งหมด งบโฆษณาสูงสุดคือค่าโฆษณาต่อออเดอร์ที่ทำให้กำไรเหลือ 0 พอดีที่ราคาขายปกติ</p>
   </div>
+  <div class="card" style="margin-top:16px">
+    <h2>สินค้าที่บันทึกไว้</h2>
+    <div class="row"><label class="f" style="flex:1;min-width:180px">ชื่อสินค้า<input type="text" id="itName" placeholder="เช่น กระเป๋าผ้าแคนวาส"></label>
+      <button class="btn" id="itSave" type="button" style="align-self:flex-end"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>บันทึกสินค้านี้</button></div>
+    <div id="itOut"></div>
+    <p class="note">บันทึกตัวเลขที่กรอกอยู่ด้านบนเป็นสินค้า 1 รายการ เพื่อดูกำไรรวมของทั้งร้าน รายการเก็บอยู่ในเบราว์เซอร์ของเครื่องนี้เท่านั้น</p>
+  </div>
   <div class="card gloss" style="margin-top:16px">
     <h2>คำที่ควรรู้ก่อนตั้งราคา</h2>
     <details><summary>ค่าคอมมิชชัน</summary><p>ส่วนแบ่งที่แพลตฟอร์มหักจากราคาสินค้าทุกครั้งที่ขายได้ อัตราต่างกันตามหมวดสินค้าและประเภทร้าน</p></details>
@@ -309,14 +323,14 @@ COD 350</textarea></label>
 </div>
 </main>
 <footer class="site-ft"><button type="button" data-open="dlgGuide">วิธีใช้</button><button type="button" data-open="dlgPolicy">นโยบายความเป็นส่วนตัวและความปลอดภัย</button><a href="https://github.com/rookiekrit6-dotcom/Seller-Tool/issues">แจ้งปัญหาหรือเสนอแนะ</a><span>ใช้ฟรี ไม่ต้องสมัครสมาชิก</span></footer>
-<dialog class="dlg" id="dlgGuide" aria-labelledby="dlgGuideT"><div class="dlg-h"><b id="dlgGuideT">วิธีใช้ กำไรแม่ค้า</b><button class="dlg-x" type="button" data-close>ปิด</button></div><div class="dlg-b"><h3>คำนวณกำไร</h3><ol><li>เลือกแพลตฟอร์มและหมวดสินค้า ระบบจะใส่อัตราค่าธรรมเนียมตั้งต้นให้</li><li>กรอกราคาขาย ต้นทุนสินค้า ค่าแพ็ก ค่าส่ง และค่าโฆษณาต่อออเดอร์</li><li>เปิด Seller Center ของร้านคุณ แล้วแก้อัตราค่าธรรมเนียมในเว็บให้ตรงกับของจริง</li><li>ดูกำไรสุทธิ ราคาเท่าทุน และราคาที่ควรตั้งเพื่อให้ได้กำไรตามเป้า</li><li>เลื่อนลงไปดูตารางเทียบว่าขายที่แพลตฟอร์มไหนเหลือกำไรมากกว่า</li></ol>
+<dialog class="dlg" id="dlgGuide" aria-labelledby="dlgGuideT"><div class="dlg-h"><b id="dlgGuideT">วิธีใช้ กำไรแม่ค้า</b><button class="dlg-x" type="button" data-close>ปิด</button></div><div class="dlg-b"><h3>คำนวณกำไร</h3><ol><li>เลือกแพลตฟอร์มและหมวดสินค้า ระบบจะใส่อัตราค่าธรรมเนียมตั้งต้นให้</li><li>กรอกราคาขาย ต้นทุนสินค้า ค่าแพ็ก ค่าส่ง และค่าโฆษณาต่อออเดอร์</li><li>เปิด Seller Center ของร้านคุณ แล้วแก้อัตราค่าธรรมเนียมในเว็บให้ตรงกับของจริง</li><li>ดูกำไรสุทธิ ราคาเท่าทุน และราคาที่ควรตั้งเพื่อให้ได้กำไรตามเป้า</li><li>เลื่อนลงไปดูตารางเทียบว่าขายที่แพลตฟอร์มไหนเหลือกำไรมากกว่า</li><li>กดบันทึกสินค้านี้ เพื่อเก็บสินค้าหลายรายการและดูกำไรรวมต่อเดือนของทั้งร้าน</li></ol>
 <h3>แคปชันขายของ</h3><ol><li>กรอกชื่อสินค้า ราคา จุดเด่นบรรทัดละ 1 ข้อ และโปรโมชัน</li><li>กดสร้างแคปชัน จะได้ 8 แบบให้เลือก</li><li>กดคัดลอกแบบที่ชอบ แล้วอ่านทวนและปรับถ้อยคำให้ตรงกับสินค้าจริงก่อนโพสต์</li></ol>
 <h3>ใบปะหน้าพัสดุ</h3><ol><li>กรอกชื่อและที่อยู่ผู้ส่ง ระบบจะจำไว้ในเครื่องนี้</li><li>วางที่อยู่ลูกค้า เว้น 1 บรรทัดว่างระหว่างแต่ละราย บรรทัดแรกคือชื่อผู้รับ</li><li>ถ้าเก็บเงินปลายทาง เพิ่มบรรทัด COD ตามด้วยยอดเงิน</li><li>เลือกขนาดกระดาษ แล้วกดพิมพ์ใบปะหน้า</li></ol></div></dialog>
 <dialog class="dlg" id="dlgPolicy" aria-labelledby="dlgPolicyT"><div class="dlg-h"><b id="dlgPolicyT">นโยบายความเป็นส่วนตัวและความปลอดภัยของข้อมูล</b><button class="dlg-x" type="button" data-close>ปิด</button></div><div class="dlg-b">
 <p><small>ปรับปรุงล่าสุด 15 พฤศจิกายน 2569</small></p>
 <p>กำไรแม่ค้าเป็นเครื่องมือที่ทำงานในเบราว์เซอร์ของคุณทั้งหมด ไม่มีระบบสมาชิก และไม่มีเซิร์ฟเวอร์ของเราที่รับหรือเก็บข้อมูลที่คุณกรอก</p>
 <h3>ข้อมูลที่เว็บนี้เก็บ</h3>
-<ul><li>ชื่อและที่อยู่ผู้ส่งที่คุณกรอกในหน้าใบปะหน้า เก็บไว้ในเบราว์เซอร์ของเครื่องนี้เพื่อไม่ต้องกรอกซ้ำ</li><li>ราคา ต้นทุน ข้อความแคปชัน และที่อยู่ลูกค้า ไม่ถูกบันทึก และจะหายไปเมื่อปิดหรือรีเฟรชหน้าเว็บ</li></ul>
+<ul><li>ชื่อและที่อยู่ผู้ส่งที่คุณกรอกในหน้าใบปะหน้า เก็บไว้ในเบราว์เซอร์ของเครื่องนี้เพื่อไม่ต้องกรอกซ้ำ</li><li>รายการสินค้าที่คุณกดบันทึกในหน้าคำนวณกำไร (ชื่อสินค้า ราคา ต้นทุน และอัตราค่าธรรมเนียม) เก็บไว้ในเบราว์เซอร์ของเครื่องนี้</li><li>ข้อความแคปชันและที่อยู่ลูกค้า ไม่ถูกบันทึก และจะหายไปเมื่อปิดหรือรีเฟรชหน้าเว็บ</li></ul>
 <h3>สิ่งที่เว็บนี้ไม่ทำ</h3>
 <ul><li>ไม่มีการสมัครสมาชิก ไม่ขออีเมลหรือรหัสผ่านของคุณ</li><li>ไม่ส่งข้อมูลที่คุณกรอกออกไปนอกเครื่อง</li><li>ไม่ใช้คุกกี้ติดตาม ไม่มีโฆษณา และไม่มีระบบวิเคราะห์ผู้เข้าชม ณ วันที่ปรับปรุงนโยบายนี้</li></ul>
 <h3>ผู้ให้บริการภายนอก</h3>
@@ -442,6 +456,19 @@ function renderCompare(v){
       ${top ? `<span class="pill ${r.b.net < 0 ? 'bad' : 'good'}">${r.b.net < 0 ? 'ขาดทุนน้อยที่สุด' : 'กำไรมากที่สุด'}</span>` : `<span class="pill warn">น้อยกว่า ${baht(best - r.b.net)} ฿</span>`}</div>`; }).join('');
 }
 
+/* ---------- saved products ---------- */
+const FIELD = {price:'price', discount:'discount', cost:'cost', pack:'pack', shipSeller:'shipSeller', shipBuyer:'shipBuyer', ads:'ads', comm:'rComm', trans:'rTrans', prog:'rProg', cap:'rCap', fixed:'rFixed'};
+let items = store.get('km_items') || [];
+function renderItems(){
+  if (!items.length){ $('itOut').innerHTML = '<p class="note">ยังไม่มีสินค้าที่บันทึก</p>'; return; }
+  let tot = 0;
+  $('itOut').innerHTML = '<div class="it-wrap"><table class="t it"><tr><th>สินค้า</th><th>ราคา</th><th>กำไรต่อออเดอร์</th><th>ออเดอร์ต่อเดือน</th><th>กำไรต่อเดือน</th><th></th></tr>'
+    + items.map((it, i) => { const b = breakdown(it.v, it.v.price), m = b.net * it.orders; tot += m;
+        return `<tr><td>${esc(it.name)}</td><td>${baht(it.v.price)}</td><td>${baht(b.net)}</td><td>${it.orders}</td><td>${baht(m)}</td><td><button class="btn small ghost" type="button" data-load="${i}">เปิด</button> <button class="btn small ghost" type="button" data-del="${i}">ลบ</button></td></tr>`; }).join('')
+    + `<tr class="sum"><td>กำไรรวมต่อเดือน</td><td></td><td></td><td></td><td>${baht(tot)}</td><td></td></tr></table></div>`;
+}
+function saveItems(){ store.set('km_items', items); renderItems(); }
+
 /* ---------- caption ---------- */
 function captions(){
   const name = $('cName').value.trim() || 'สินค้า', price = $('cPrice').value.trim(), normal = $('cNormal').value.trim();
@@ -507,11 +534,17 @@ $('platform').addEventListener('change', fillCats);
 $('category').addEventListener('change', applyPreset);
 $('cmpCat').addEventListener('change', calc);
 $('v-profit').addEventListener('input', ev => { if (ev.target.tagName === 'INPUT') calc(); });
+$('itSave').addEventListener('click', () => { items.push({ name: $('itName').value.trim() || 'สินค้า ' + (items.length + 1), v: inputs(), orders: num('orders') }); $('itName').value = ''; saveItems(); });
+$('itOut').addEventListener('click', e => {
+  const l = e.target.closest('[data-load]'), d = e.target.closest('[data-del]');
+  if (l){ const it = items[+l.dataset.load]; Object.entries(FIELD).forEach(([k, id]) => $(id).value = it.v[k]); $('orders').value = it.orders; $('itName').value = it.name; calc(); scrollTo({top:0, behavior:'smooth'}); }
+  if (d){ items.splice(+d.dataset.del, 1); saveItems(); }
+});
 $('cGo').addEventListener('click', renderCaptions);
 $('v-label').addEventListener('input', renderLabels);
 $('lPrint').addEventListener('click', () => { renderLabels(); window.print(); });
 const savedFrom = store.get('km_from'); if (savedFrom) $('lFrom').value = savedFrom;
-showTab(); renderCaptions(); renderLabels();
+showTab(); renderCaptions(); renderLabels(); renderItems();
 /* ---------- guide + policy dialogs ---------- */
 document.addEventListener('click', e => {
   const o = e.target.closest('[data-open]'); if (o){ const d = document.getElementById(o.dataset.open); if (d && d.showModal) d.showModal(); return; }
